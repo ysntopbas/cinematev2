@@ -1,3 +1,4 @@
+import 'package:cinematev2/widgets/text_field_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -21,21 +22,16 @@ class RegisterPage extends StatelessWidget {
                   fontSize: 64,
                   fontWeight: FontWeight.bold,
                 )),
-            TextField(
-              keyboardType: TextInputType.emailAddress,
-              decoration: InputDecoration(
-                  hintText: 'E-posta', border: OutlineInputBorder()),
-            ),
-            TextField(
-              obscureText: true,
-              decoration: InputDecoration(
-                  hintText: 'Şifre', border: OutlineInputBorder()),
-            ),
-            TextField(
-              obscureText: true,
-              decoration: InputDecoration(
-                  hintText: 'Şifre Tekrar', border: OutlineInputBorder()),
-            ),
+            TextFieldWidget(
+                hintText: "E-posta", keyboardType: TextInputType.emailAddress),
+            TextFieldWidget(
+                hintText: "Şifre",
+                obscureText: true,
+                keyboardType: TextInputType.visiblePassword),
+            TextFieldWidget(
+                hintText: "Şifre Tekrar",
+                obscureText: true,
+                keyboardType: TextInputType.visiblePassword),
             FilledButton(
               onPressed: () {},
               child: Text('Kayıt Ol'),
