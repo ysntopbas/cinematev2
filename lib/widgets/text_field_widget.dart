@@ -6,13 +6,16 @@ class TextFieldWidget extends StatelessWidget {
     required this.hintText,
     this.obscureText = false,
     required this.keyboardType,
+    this.contr,
   });
   final String hintText;
   final bool obscureText;
   final TextInputType keyboardType;
+  final TextEditingController? contr;
   @override
   Widget build(BuildContext context) {
     return TextField(
+      controller: contr,
       keyboardType: keyboardType,
       obscureText: obscureText,
       decoration: InputDecoration(
