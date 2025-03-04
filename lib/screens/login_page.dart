@@ -1,5 +1,6 @@
-import 'package:cinematev2/providers/auth_provider.dart';
+import 'package:cinematev2/providers/auth_provider.dart' as local_auth;
 import 'package:cinematev2/widgets/text_field_widget.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -56,20 +57,33 @@ class _LoginPageState extends State<LoginPage> {
                 keyboardType: TextInputType.visiblePassword),
             FilledButton(
               onPressed: () async {
-                context
-                    .read<AuthProvider>()
-                    .login(_emailController.text, _passwordController.text);
+                final authProvider = context.read<local_auth.AuthProvider>();
+                final loginMessage = ScaffoldMessenger.of(context);
 
-                if (context.read<AuthProvider>().isAuthenticated) {
-                  ScaffoldMessenger.of(context).showSnackBar(
+                try {
+                  await authProvider.login(
+                      _emailController.text, _passwordController.text);
+                  if (!mounted) return;
+                  if (authProvider.isAuthenticated) {
+                    loginMessage.showSnackBar(SnackBar(
+                      duration: const Duration(milliseconds: 800),
+                      content: Text('Giriş başarılı'),
+                    ));
+                  }
+                } on FirebaseAuthException catch (e) {
+                  if (!mounted) return;
+                  String errorMessage;
+                  if (e.code == 'user-not-found') {
+                    errorMessage = 'Kullanıcı bulunamadı';
+                  } else if (e.code == 'wrong-password') {
+                    errorMessage = 'Yanlış şifre';
+                  } else {
+                    errorMessage = 'Bir hata oluştu';
+                  }
+                  loginMessage.showSnackBar(
                     SnackBar(
-                      content: Text('Giriş yapılıyor...'),
-                    ),
-                  );
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Bok'),
+                      duration: const Duration(milliseconds: 800),
+                      content: Text(errorMessage),
                     ),
                   );
                 }

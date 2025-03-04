@@ -20,7 +20,7 @@ class AuthProvider extends ChangeNotifier {
     });
   }
 
-  void login(String email, String password) async {
+  Future<void> login(String email, String password) async {
     final deneme = await _authService.login(email, password);
     if (deneme == null) {
       _isAuthenticated = false;
@@ -30,7 +30,7 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void register(String email, String password) async {
+  Future<void> register(String email, String password) async {
     final kayit = await _authService.register(email, password);
     if (kayit == null) {
       _isAuthenticated = false;
