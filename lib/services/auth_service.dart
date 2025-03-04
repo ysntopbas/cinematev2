@@ -31,4 +31,8 @@ class AuthService {
   void logout() {
     _auth.signOut();
   }
+
+  get user {
+    return _auth.authStateChanges();
+  }
 }

@@ -66,7 +66,6 @@ class _LoginPageState extends State<LoginPage> {
                       content: Text('Giriş yapılıyor...'),
                     ),
                   );
-                  Navigator.pushReplacementNamed(context, '/home');
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(

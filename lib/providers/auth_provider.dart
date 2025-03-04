@@ -5,13 +5,20 @@ import 'package:flutter/material.dart';
 class AuthProvider extends ChangeNotifier {
   final AuthService _authService = AuthService();
   bool _isAuthenticated = false;
+  bool get isAuthenticated => _isAuthenticated;
+  User? user;
 
   AuthProvider() {
-    _isAuthenticated = !(user == null);
+    _authService.user.listen((User? user) {
+      this.user = user;
+      if (user == null) {
+        _isAuthenticated = false;
+      } else {
+        _isAuthenticated = true;
+      }
+      notifyListeners();
+    });
   }
-
-  bool get isAuthenticated => _isAuthenticated;
-  User? user = FirebaseAuth.instance.currentUser;
 
   void login(String email, String password) async {
     final deneme = await _authService.login(email, password);

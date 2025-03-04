@@ -35,7 +35,15 @@ class MyApp extends StatelessWidget {
           onPrimary: Colors.grey[900]!,
           onSecondary: Colors.amber,
         )),
-        home: LoginPage(),
+        home: Consumer<AuthProvider>(
+          builder: (context, value, child) {
+            if (value.isAuthenticated) {
+              return const HomePage();
+            } else {
+              return const LoginPage();
+            }
+          },
+        ),
         routes: {
           '/register': (context) => const RegisterPage(),
           '/home': (context) => const HomePage(),
