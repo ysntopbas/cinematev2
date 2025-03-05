@@ -2,6 +2,7 @@ import 'package:cinematev2/providers/auth_provider.dart' as local_auth;
 import 'package:cinematev2/widgets/text_field_widget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
@@ -46,15 +47,41 @@ class _LoginPageState extends State<LoginPage> {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            TextFieldWidget(
+            Form(
+              autovalidateMode: AutovalidateMode.always,
+              child: TextFieldWidget(
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Bu alan boş bırakılamaz';
+                  }
+                  if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
+                      .hasMatch(value)) {
+                    return 'Geçerli bir e-posta adresi girin';
+                  }
+                  return null;
+                },
                 contr: _emailController,
                 hintText: "E-posta",
-                keyboardType: TextInputType.emailAddress),
-            TextFieldWidget(
-                contr: _passwordController,
-                hintText: "Şifre",
-                obscureText: true,
-                keyboardType: TextInputType.visiblePassword),
+                keyboardType: TextInputType.emailAddress,
+              ),
+            ),
+            Form(
+              autovalidateMode: AutovalidateMode.always,
+              child: TextFieldWidget(
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Bu alan boş bırakılamaz';
+                    }
+                    if (value.length < 6) {
+                      return 'Şifre en az 6 karakter olmalıdır';
+                    }
+                    return null;
+                  },
+                  contr: _passwordController,
+                  hintText: "Şifre",
+                  obscureText: true,
+                  keyboardType: TextInputType.visiblePassword),
+            ),
             FilledButton(
               onPressed: () async {
                 final authProvider = context.read<local_auth.AuthProvider>();
@@ -73,10 +100,8 @@ class _LoginPageState extends State<LoginPage> {
                 } on FirebaseAuthException catch (e) {
                   if (!mounted) return;
                   String errorMessage;
-                  if (e.code == 'user-not-found') {
-                    errorMessage = 'Kullanıcı bulunamadı';
-                  } else if (e.code == 'wrong-password') {
-                    errorMessage = 'Yanlış şifre';
+                  if (e.code == 'invalid-credential') {
+                    errorMessage = 'Kullanıcı adı veya Şifre yanlış.';
                   } else {
                     errorMessage = 'Bir hata oluştu';
                   }
@@ -92,7 +117,7 @@ class _LoginPageState extends State<LoginPage> {
             ),
             TextButton(
                 onPressed: () {
-                  Navigator.pushNamed(context, '/register');
+                  Navigator.pushReplacementNamed(context, '/register');
                 },
                 child: Text('Hesabınız yok mu? Kayıt olun')),
           ],

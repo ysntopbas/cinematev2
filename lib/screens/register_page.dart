@@ -74,7 +74,7 @@ class _RegisterPageState extends State<RegisterPage> {
             ),
             TextButton(
                 onPressed: () {
-                  Navigator.pushNamed(context, '/');
+                  Navigator.pushReplacementNamed(context, '/');
                 },
                 child: Text('Hesabınız var mı? Giriş yapın')),
           ],

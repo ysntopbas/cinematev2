@@ -13,7 +13,7 @@ class AuthService {
       return logauth.user;
     } catch (e) {
       log(e.toString());
-      return null;
+      rethrow;
     }
   }
 
@@ -24,7 +24,7 @@ class AuthService {
       return regauth.user;
     } catch (e) {
       log(e.toString());
-      return null;
+      rethrow;
     }
   }
 

@@ -7,14 +7,18 @@ class TextFieldWidget extends StatelessWidget {
     this.obscureText = false,
     required this.keyboardType,
     this.contr,
+    this.validator,
   });
   final String hintText;
   final bool obscureText;
   final TextInputType keyboardType;
   final TextEditingController? contr;
+  final String? Function(String?)? validator;
+
   @override
   Widget build(BuildContext context) {
-    return TextField(
+    return TextFormField(
+      validator: validator,
       controller: contr,
       keyboardType: keyboardType,
       obscureText: obscureText,
