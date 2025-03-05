@@ -45,7 +45,17 @@ class MyApp extends StatelessWidget {
           },
         ),
         routes: {
-          '/register': (context) => const RegisterPage(),
+          '/register': (context) {
+            return Consumer<AuthProvider>(
+              builder: (context, value, child) {
+                if (value.isAuthenticated) {
+                  return const HomePage();
+                } else {
+                  return const RegisterPage();
+                }
+              },
+            );
+          },
           '/home': (context) => const HomePage(),
         },
       ),

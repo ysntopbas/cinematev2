@@ -1,3 +1,4 @@
+import 'package:cinematev2/core/validation_helper.dart';
 import 'package:cinematev2/providers/auth_provider.dart' as local_auth;
 import 'package:cinematev2/widgets/text_field_widget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -50,16 +51,7 @@ class _LoginPageState extends State<LoginPage> {
             Form(
               autovalidateMode: AutovalidateMode.always,
               child: TextFieldWidget(
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Bu alan boş bırakılamaz';
-                  }
-                  if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
-                      .hasMatch(value)) {
-                    return 'Geçerli bir e-posta adresi girin';
-                  }
-                  return null;
-                },
+                validator: ValidationHelper.isEmailValid,
                 contr: _emailController,
                 hintText: "E-posta",
                 keyboardType: TextInputType.emailAddress,
@@ -68,15 +60,7 @@ class _LoginPageState extends State<LoginPage> {
             Form(
               autovalidateMode: AutovalidateMode.always,
               child: TextFieldWidget(
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Bu alan boş bırakılamaz';
-                    }
-                    if (value.length < 6) {
-                      return 'Şifre en az 6 karakter olmalıdır';
-                    }
-                    return null;
-                  },
+                  validator: ValidationHelper.isPasswordValid,
                   contr: _passwordController,
                   hintText: "Şifre",
                   obscureText: true,

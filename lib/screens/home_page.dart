@@ -15,6 +15,7 @@ class HomePage extends StatelessWidget {
             icon: const Icon(Icons.exit_to_app),
             onPressed: () {
               context.read<AuthProvider>().logout();
+              Navigator.pushReplacementNamed(context, '/');
             },
           ),
         ],
