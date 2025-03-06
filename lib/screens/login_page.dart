@@ -3,7 +3,6 @@ import 'package:cinematev2/providers/auth_provider.dart' as local_auth;
 import 'package:cinematev2/widgets/text_field_widget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
