@@ -2,6 +2,7 @@ import 'package:cinematev2/firebase_options.dart';
 import 'package:cinematev2/providers/auth_provider.dart';
 import 'package:cinematev2/screens/home_page.dart';
 import 'package:cinematev2/screens/login_page.dart';
+import 'package:cinematev2/screens/movie_page.dart';
 import 'package:cinematev2/screens/register_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -57,6 +58,7 @@ class MyApp extends StatelessWidget {
             );
           },
           '/home': (context) => const HomePage(),
+          '/movie': (context) => const MoviePage(),
         },
       ),
     );

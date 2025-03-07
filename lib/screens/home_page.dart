@@ -54,7 +54,7 @@ class HomePage extends StatelessWidget {
               ListTile(
                 title: const Text('Popüler Filmler'),
                 onTap: () {
-                  Navigator.pop(context);
+                  Navigator.pushNamed(context, '/movie');
                 },
               ),
               ListTile(
