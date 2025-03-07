@@ -30,19 +30,20 @@ class HomePage extends StatelessWidget {
         child: SafeArea(
           child: Column(
             children: [
-              DrawerHeader(
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-                padding: const EdgeInsets.all(30),
-                child: Text(
-                  'CineMate',
-                  style: GoogleFonts.fleurDeLeah(
-                    fontSize: 64,
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.secondary,
+              Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      'CineMate',
+                      style: GoogleFonts.fleurDeLeah(
+                        fontSize: 64,
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                    ),
                   ),
-                ),
+                ],
               ),
               ListTile(
                 title: const Text('Anasayfa'),
@@ -63,7 +64,9 @@ class HomePage extends StatelessWidget {
                 },
               ),
               Spacer(),
-              Text('deneme'),
+              Text(
+                  textAlign: TextAlign.center,
+                  'Hoşgeldiniz ${context.read<AuthProvider>().user?.email ?? 'boş'}'),
             ],
           ),
         ),
@@ -72,8 +75,7 @@ class HomePage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
-                'Hoşgeldiniz! ${context.read<AuthProvider>().user?.email ?? 'boş'}'),
+            Text('Hoşgeldiniz! '),
           ],
         ),
       ),
