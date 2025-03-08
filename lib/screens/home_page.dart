@@ -48,7 +48,7 @@ class HomePage extends StatelessWidget {
               ListTile(
                 title: const Text('Anasayfa'),
                 onTap: () {
-                  Navigator.pop(context);
+                  Navigator.pushNamed(context, '/home');
                 },
               ),
               ListTile(
@@ -60,7 +60,7 @@ class HomePage extends StatelessWidget {
               ListTile(
                 title: const Text('Popüler Diziler'),
                 onTap: () {
-                  Navigator.pop(context);
+                  Navigator.pushNamed(context, '/tvshow');
                 },
               ),
               Spacer(),
