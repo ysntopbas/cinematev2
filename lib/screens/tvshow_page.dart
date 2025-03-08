@@ -10,7 +10,7 @@ class TvshowPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Popüler Diziler'),
       ),
-      body: GridViewWidget(),
+      body: GridViewWidget(movies: [],),
     );
   }
 }

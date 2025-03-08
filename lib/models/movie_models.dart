@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 class Movie {
   final int id;
@@ -15,17 +16,28 @@ class Movie {
 
   factory Movie.fromJson(Map<String, dynamic> json) {
     return Movie(
-      id: json['id'],
-      title: json['title'],
-      overview: json['overview'],
+      id: json['id'] ?? 0,
+      title: json['title'] ?? 'İsimsiz Film',
+      overview: json['overview'] ?? '',
       posterPath: json['poster_path'] ?? '',
     );
   }
 
   static List<Movie> fromJsonList(String jsonString) {
-    final data = jsonDecode(jsonString);
-    return (data['results'] as List)
-        .map((movie) => Movie.fromJson(movie))
-        .toList();
+    try {
+      final data = jsonDecode(jsonString);
+      if (data['results'] == null) {
+        log("API yanıtında 'results' alanı bulunamadı");
+        return [];
+      }
+      
+      return (data['results'] as List)
+          .map((movie) => Movie.fromJson(movie))
+          .toList();
+    } catch (e) {
+      log("JSON ayrıştırma hatası: $e");
+      log("JSON içeriği: $jsonString");
+      return [];
+    }
   }
 }
