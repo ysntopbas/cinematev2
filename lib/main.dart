@@ -1,5 +1,6 @@
 import 'package:cinematev2/firebase_options.dart';
 import 'package:cinematev2/providers/auth_provider.dart';
+import 'package:cinematev2/providers/tvshow_provider.dart';
 import 'package:cinematev2/screens/home_page.dart';
 import 'package:cinematev2/screens/login_page.dart';
 import 'package:cinematev2/screens/movie_page.dart';
@@ -30,6 +31,7 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (context) => AuthProvider()),
         ChangeNotifierProvider(create: (context) => MovieProvider()),
+        ChangeNotifierProvider(create: (context) => TvshowProvider()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

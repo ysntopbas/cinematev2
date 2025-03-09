@@ -13,26 +13,27 @@ class MoviePage extends StatefulWidget {
 
 class _MoviePageState extends State<MoviePage> {
   final ScrollController _scrollController = ScrollController();
-  
+
   @override
   void initState() {
     super.initState();
     // Sayfa yüklendiğinde ilk filmleri çek
     Future.microtask(() => _fetchMovies());
-    
+
     // Scroll controller'a listener ekle
     _scrollController.addListener(_scrollListener);
   }
-  
+
   @override
   void dispose() {
     _scrollController.removeListener(_scrollListener);
     _scrollController.dispose();
     super.dispose();
   }
-  
+
   void _scrollListener() {
-    if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent - 200) {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 200) {
       // Listenin sonuna yaklaşıldığında yeni filmler yükle
       _loadMoreMovies();
     }
@@ -40,9 +41,10 @@ class _MoviePageState extends State<MoviePage> {
 
   Future<void> _fetchMovies({bool refresh = false}) async {
     if (!mounted) return;
-    
+
     try {
-      await Provider.of<MovieProvider>(context, listen: false).fetchPopularMovies(refresh: refresh);
+      await Provider.of<MovieProvider>(context, listen: false)
+          .fetchPopularMovies(refresh: refresh);
     } catch (e) {
       log("Film sayfası hata: $e");
       if (mounted) {
@@ -52,7 +54,7 @@ class _MoviePageState extends State<MoviePage> {
       }
     }
   }
-  
+
   Future<void> _loadMoreMovies() async {
     final movieProvider = Provider.of<MovieProvider>(context, listen: false);
     if (!movieProvider.isLoading && movieProvider.hasMorePages) {
@@ -65,19 +67,13 @@ class _MoviePageState extends State<MoviePage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Popüler Filmler'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: () => _fetchMovies(refresh: true),
-          ),
-        ],
       ),
       body: RefreshIndicator(
         onRefresh: () => _fetchMovies(refresh: true),
         child: Consumer<MovieProvider>(
           builder: (context, movieProvider, child) {
             return GridViewWidget(
-              movies: movieProvider.popularMovies,
+              contents: movieProvider.popularMovies,
               isLoading: movieProvider.isLoading,
               error: movieProvider.error,
               scrollController: _scrollController,

@@ -1,19 +1,15 @@
 import 'dart:convert';
 import 'dart:developer';
 
-class Movie {
-  final int id;
-  final String title;
-  final String overview;
-  final String posterPath;
+import 'package:cinematev2/models/content_models.dart';
 
+class Movie extends Content {
   Movie({
-    required this.id,
-    required this.title,
-    required this.overview,
-    required this.posterPath,
+    required super.id,
+    required super.title,
+    required super.overview,
+    required super.posterPath,
   });
-
   factory Movie.fromJson(Map<String, dynamic> json) {
     return Movie(
       id: json['id'] ?? 0,
@@ -22,7 +18,6 @@ class Movie {
       posterPath: json['poster_path'] ?? '',
     );
   }
-
   static List<Movie> fromJsonList(String jsonString) {
     try {
       final data = jsonDecode(jsonString);
@@ -30,7 +25,7 @@ class Movie {
         log("API yanıtında 'results' alanı bulunamadı");
         return [];
       }
-      
+
       return (data['results'] as List)
           .map((movie) => Movie.fromJson(movie))
           .toList();
