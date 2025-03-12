@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:cinematev2/configs/api_config.dart';
+import 'package:cinematev2/models/movie_details_models.dart';
 import 'package:cinematev2/models/movie_models.dart';
 import 'package:http/http.dart' as http;
 import 'dart:developer';
@@ -26,26 +29,28 @@ class MovieService {
     }
   }
 
-  Future<List<Movie>> fetchDetailMovies({int page = 1}) async {
+  Future<MovieDetailsModels> fetchDetailMovies(int movieId) async {
     try {
       final url = Uri.parse(
-          //MovieID eklemeyi unutma
-          "${ApiConfig.baseUrl}/movie/{movie_id}?api_key=${ApiConfig.apiKey}&language=tr-TR&page=$page&include_adult=false");
+          "${ApiConfig.baseUrl}/movie/$movieId?api_key=${ApiConfig.apiKey}&language=tr-TR");
 
-      log("API isteği yapılıyor: Sayfa $page");
+      log("API isteği yapılıyor: Film ID $movieId");
       final response = await http.get(url);
 
       if (response.statusCode == 200) {
         log("API yanıtı başarılı: ${response.statusCode}");
-        return Movie.fromJsonList(response.body);
+
+        final Map<String, dynamic> jsonData = jsonDecode(response.body);
+
+        return MovieDetailsModels.fromJson(jsonData);
       } else {
         log("API hatası: ${response.statusCode} - ${response.body}");
         throw Exception(
-            "Detaylı filmler getirilemedi. Durum kodu: ${response.statusCode}");
+            "Film detayları getirilemedi. Durum kodu: ${response.statusCode}");
       }
     } catch (e) {
       log("Film servisi hatası: $e");
-      throw Exception("Detaylı filmler getirilemedi: $e");
+      throw Exception("Film detayları getirilemedi: $e");
     }
   }
 }

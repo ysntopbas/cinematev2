@@ -1,6 +1,7 @@
 import 'package:cinematev2/firebase_options.dart';
 import 'package:cinematev2/providers/auth_provider.dart';
 import 'package:cinematev2/providers/tvshow_provider.dart';
+import 'package:cinematev2/screens/detail_page.dart';
 import 'package:cinematev2/screens/home_page.dart';
 import 'package:cinematev2/screens/login_page.dart';
 import 'package:cinematev2/screens/movie_page.dart';
@@ -69,6 +70,7 @@ class MyApp extends StatelessWidget {
           '/home': (context) => const HomePage(),
           '/movie': (context) => const MoviePage(),
           '/tvshow': (context) => const TvshowPage(),
+          '/detail': (context) => const DetailPage(),
         },
       ),
     );

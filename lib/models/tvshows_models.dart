@@ -7,14 +7,12 @@ class Tvshow extends Content {
   Tvshow({
     required super.id,
     required super.title,
-    required super.overview,
     required super.posterPath,
   });
   factory Tvshow.fromJson(Map<String, dynamic> json) {
     return Tvshow(
       id: json['id'] ?? 0,
       title: json['name'] ?? 'İsimsiz Dizi',
-      overview: json['overview'] ?? '',
       posterPath: json['poster_path'] ?? '',
     );
   }
