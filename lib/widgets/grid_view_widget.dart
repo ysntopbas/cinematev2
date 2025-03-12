@@ -3,7 +3,6 @@ import 'package:cinematev2/widgets/grid_view_item.dart';
 import 'package:flutter/material.dart';
 
 class GridViewWidget extends StatelessWidget {
-  // final List<Movie> movies;
   final List<Content> contents;
   final bool isLoading;
   final String? error;
@@ -62,7 +61,6 @@ class GridViewWidget extends StatelessWidget {
       itemCount: contents.length + (isLoading && hasMorePages ? 1 : 0),
       itemBuilder: (context, index) {
         if (index == contents.length) {
-          // Son eleman yükleniyor göstergesi
           return const Center(
             child: Padding(
               padding: EdgeInsets.all(8.0),
@@ -70,11 +68,14 @@ class GridViewWidget extends StatelessWidget {
             ),
           );
         }
-        return GridViewItem(
-            id: contents[index].id,
-            title: contents[index].title,
-            overview: contents[index].overview,
-            posterPath: contents[index].posterPath);
+        return GestureDetector(
+          onTap: () {},
+          //Icerik Yonlendirme
+          child: GridViewItem(
+              id: contents[index].id,
+              title: contents[index].title,
+              posterPath: contents[index].posterPath),
+        );
       },
     );
   }
