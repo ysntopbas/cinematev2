@@ -12,7 +12,10 @@ class TvshowsDetailsModels extends Tvshow {
   final String? tagline;
   final String? originalName;
   final String? overview;
-  final String? genres;
+  final List<dynamic>? genres;
+  final String? status;
+  final int? numberofEpisodes;
+  final int? numberofSeasons;
 
   TvshowsDetailsModels({
     required super.id,
@@ -27,6 +30,9 @@ class TvshowsDetailsModels extends Tvshow {
     required this.originalName,
     required this.overview,
     required this.genres,
+    required this.status,
+    required this.numberofEpisodes,
+    required this.numberofSeasons,
   });
 
   factory TvshowsDetailsModels.fromJson(Map<String, dynamic> json) {
@@ -42,7 +48,10 @@ class TvshowsDetailsModels extends Tvshow {
       tagline: json['tagline'] ?? '',
       originalName: json['original_name'] ?? '',
       overview: json['overview'] ?? '',
-      genres: json['genres'] ?? '',
+      genres: json['genres'] ?? [],
+      status: json['status'] ?? '',
+      numberofEpisodes: json['number_of_episodes'] ?? 0,
+      numberofSeasons: json['number_of_seasons'] ?? 0,
     );
   }
 
@@ -60,5 +69,10 @@ class TvshowsDetailsModels extends Tvshow {
       log("JSON ayrıştırma hatası: $e");
       return [];
     }
+  }
+
+  String getGenresAsString() {
+    if (genres == null || genres!.isEmpty) return '';
+    return genres!.map((genre) => genre['name']).join(', ');
   }
 }

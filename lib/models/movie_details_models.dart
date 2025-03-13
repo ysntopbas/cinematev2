@@ -6,7 +6,7 @@ import 'package:cinematev2/models/movie_models.dart';
 class MovieDetailsModels extends Movie {
   final String? backdropPath;
   final String? firstAirDate;
-  final String? genres;
+  final List<dynamic>? genres;
   final String? homepage;
   final String? lastAirDate;
   final int? numberofEpisodes;
@@ -42,17 +42,17 @@ class MovieDetailsModels extends Movie {
   factory MovieDetailsModels.fromJson(Map<String, dynamic> json) {
     return MovieDetailsModels(
       id: json['id'] ?? 0,
-      title: json['name'] ?? 'İsimsiz Dizi',
+      title: json['title'] ?? 'İsimsiz Film',
       posterPath: json['poster_path'] ?? '',
       backdropPath: json['backdrop_path'] ?? '',
-      firstAirDate: json['first_air_date'] ?? '',
-      genres: json['genres'] ?? '',
+      firstAirDate: json['release_date'] ?? '',
+      genres: json['genres'] ?? [],
       homepage: json['homepage'] ?? '',
       lastAirDate: json['last_air_date'] ?? '',
       numberofEpisodes: json['number_of_episodes'] ?? 0,
       numberofSeasons: json['number_of_seasons'] ?? 0,
       originalLanguage: json['original_language'] ?? '',
-      originalName: json['original_name'] ?? '',
+      originalName: json['original_title'] ?? '',
       overview: json['overview'] ?? '',
       voteAverage: json['vote_average']?.toDouble() ?? 0.0,
       voteCount: json['vote_count'] ?? 0,
@@ -76,5 +76,10 @@ class MovieDetailsModels extends Movie {
       log("JSON içeriği: $jsonString");
       return [];
     }
+  }
+
+  String getGenresAsString() {
+    if (genres == null || genres!.isEmpty) return '';
+    return genres!.map((genre) => genre['name']).join(', ');
   }
 }

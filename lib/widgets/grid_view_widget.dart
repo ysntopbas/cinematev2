@@ -70,13 +70,20 @@ class GridViewWidget extends StatelessWidget {
         }
         return GestureDetector(
           onTap: () {
-            Navigator.pushNamed(context, '/detail');
+            Navigator.pushNamed(
+              context, 
+              '/detail',
+              arguments: {
+                'id': contents[index].id,
+                'isMovie': isMovie,
+              },
+            );
           },
-          //Icerik Yonlendirme
           child: GridViewItem(
-              id: contents[index].id,
-              title: contents[index].title,
-              posterPath: contents[index].posterPath),
+            id: contents[index].id,
+            title: contents[index].title,
+            posterPath: contents[index].posterPath,
+          ),
         );
       },
     );
