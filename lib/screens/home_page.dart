@@ -13,6 +13,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
+    String? watchList = "";
     return Scaffold(
       appBar: AppBar(
         title: Text('CineMate',
@@ -31,56 +32,127 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
-      drawer: Drawer(
-        child: SafeArea(
-          child: Column(
-            children: [
-              Column(
+      drawer: _buildDrawer(context),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'İzleme Listesi (Filmler)',
+              style: GoogleFonts.roboto(
+                fontSize: 24,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Container(
+              padding: const EdgeInsets.all(16.0),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color: Theme.of(context).colorScheme.primary,
+                  width: 1,
+                ),
+              ),
+              child: Column(
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      'CineMate',
-                      style: GoogleFonts.fleurDeLeah(
-                        fontSize: 64,
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
-                    ),
-                  ),
+                  if (watchList.isEmpty)
+                    Center(
+                      child: Text('Henüz izleme listenize film eklemediniz'),
+                    )
+                  else
+                    Text('İzleme Listesi'),
                 ],
               ),
-              ListTile(
-                title: const Text('Anasayfa'),
-                onTap: () {
-                  Navigator.pushNamed(context, '/home');
-                },
+            ),
+            const SizedBox(height: 24),
+            Text(
+              'İzleme Listesi (Diziler)',
+              style: GoogleFonts.roboto(
+                fontSize: 24,
+                color: Theme.of(context).colorScheme.primary,
               ),
-              ListTile(
-                title: const Text('Popüler Filmler'),
-                onTap: () {
-                  Navigator.pushNamed(context, '/movie');
-                },
+            ),
+            Container(
+              padding: const EdgeInsets.all(16.0),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color: Theme.of(context).colorScheme.primary,
+                  width: 1,
+                ),
               ),
-              ListTile(
-                title: const Text('Popüler Diziler'),
-                onTap: () {
-                  Navigator.pushNamed(context, '/tvshow');
-                },
+              child: Column(
+                children: [
+                  if (watchList.isEmpty)
+                    Column(
+                      children: [
+                        Center(
+                          child:
+                              Text('Henüz izleme listenize dizi eklemediniz'),
+                        ),
+                      ],
+                    )
+                  else
+                    Text('İzleme Listesi'),
+                ],
               ),
-              Spacer(),
-              Text(
-                  textAlign: TextAlign.center,
-                  'Hoşgeldiniz ${context.read<AuthProvider>().user?.email ?? 'boş'}'),
-            ],
-          ),
+            )
+          ],
         ),
       ),
-      body: Center(child: ListView.builder(itemBuilder: (context, index) {
-        return ListTile(
-          title: Text('Item $index'),
-        );
-      })),
+    );
+  }
+
+  Drawer _buildDrawer(BuildContext context) {
+    return Drawer(
+      child: SafeArea(
+        child: Column(
+          children: [
+            Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    'CineMate',
+                    style: GoogleFonts.fleurDeLeah(
+                      fontSize: 64,
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            ListTile(
+              leading: const Icon(Icons.home),
+              title: const Text('Anasayfa'),
+              onTap: () {
+                Navigator.pushNamed(context, '/home');
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.movie),
+              title: const Text('Popüler Filmler'),
+              onTap: () {
+                Navigator.pushNamed(context, '/movie');
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.tv),
+              title: const Text('Popüler Diziler'),
+              onTap: () {
+                Navigator.pushNamed(context, '/tvshow');
+              },
+            ),
+            Spacer(),
+            Text(
+                textAlign: TextAlign.center,
+                'Hoşgeldiniz ${context.read<AuthProvider>().user?.email ?? 'boş'}'),
+          ],
+        ),
+      ),
     );
   }
 }

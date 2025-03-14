@@ -25,7 +25,8 @@ class _DetailPageState extends State<DetailPage> {
 
   Future<void> _loadContent() async {
     try {
-      final args = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+      final args =
+          ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
       final int id = args['id'];
       final bool isMovie = args['isMovie'];
 
@@ -67,7 +68,17 @@ class _DetailPageState extends State<DetailPage> {
             expandedHeight: 300,
             pinned: true,
             flexibleSpace: FlexibleSpaceBar(
-              title: Text(_content.title),
+              title: Text(_content.title,
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.primary,
+                    fontWeight: FontWeight.bold,
+                    shadows: [
+                      Shadow(
+                        color: Colors.black,
+                        blurRadius: 8,
+                      )
+                    ],
+                  )),
               background: _content.backdropPath != null
                   ? Image.network(
                       '${ApiConfig.imageBaseUrl}${_content.backdropPath}',
@@ -78,39 +89,91 @@ class _DetailPageState extends State<DetailPage> {
           ),
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  if (_content.tagline != null && _content.tagline!.isNotEmpty)
-                    Text(
-                      _content.tagline!,
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontStyle: FontStyle.italic,
+                  Row(
+                    children: [
+                      Container(
+                        width: 120,
+                        height: 180,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          image: DecorationImage(
+                              image: NetworkImage(
+                                '${ApiConfig.imageBaseUrl}${_content.posterPath}',
+                              ),
+                              fit: BoxFit.cover),
+                        ),
                       ),
-                    ),
-                  const SizedBox(height: 16),
-                  Text(
-                    _content.overview ?? 'Açıklama bulunmuyor',
-                    style: const TextStyle(fontSize: 16),
-                  ),
-                  const SizedBox(height: 16),
-                  _buildInfoRow('Orijinal Dil:', _content.originalLanguage ?? ''),
-                  _buildInfoRow('Yayın Tarihi:', _content.firstAirDate ?? ''),
-                  _buildInfoRow('Puan:', '${_content.voteAverage ?? 0}/10'),
-                  _buildInfoRow('Oy Sayısı:', '${_content.voteCount ?? 0}'),
-                  _buildInfoRow('Durum:', _content.status ?? ''),
-                  if (_content.numberofEpisodes != null)
-                    _buildInfoRow('Bölüm Sayısı:', '${_content.numberofEpisodes}'),
-                  if (_content.numberofSeasons != null)
-                    _buildInfoRow('Sezon Sayısı:', '${_content.numberofSeasons}'),
-                  if (_content.genres != null && _content.genres!.isNotEmpty)
-                    _buildInfoRow('Türler:', _content.getGenresAsString()),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.star,
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
+                                const SizedBox(
+                                  width: 4,
+                                ),
+                                Text(
+                                  '${(_content.voteAverage ?? 0).toStringAsFixed(1)}',
+                                  style: const TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      )
+                    ],
+                  )
                 ],
               ),
             ),
-          ),
+          )
+          // SliverToBoxAdapter(
+          //   child: Padding(
+          //     padding: const EdgeInsets.all(16.0),
+          //     child: Column(
+          //       crossAxisAlignment: CrossAxisAlignment.start,
+          //       children: [
+          //         if (_content.tagline != null && _content.tagline!.isNotEmpty)
+          //           Text(
+          //             _content.tagline!,
+          //             style: const TextStyle(
+          //               fontSize: 18,
+          //               fontStyle: FontStyle.italic,
+          //             ),
+          //           ),
+          //         const SizedBox(height: 16),
+          //         Text(
+          //           _content.overview ?? 'Açıklama bulunmuyor',
+          //           style: const TextStyle(fontSize: 16),
+          //         ),
+          //         const SizedBox(height: 16),
+          //         _buildInfoRow('Orijinal Dil:', _content.originalLanguage ?? ''),
+          //         _buildInfoRow('Yayın Tarihi:', _content.firstAirDate ?? ''),
+          //         _buildInfoRow('Puan:', '${_content.voteAverage ?? 0}/10'),
+          //         _buildInfoRow('Oy Sayısı:', '${_content.voteCount ?? 0}'),
+          //         _buildInfoRow('Durum:', _content.status ?? ''),
+          //         if (_content.numberofEpisodes != null)
+          //           _buildInfoRow('Bölüm Sayısı:', '${_content.numberofEpisodes}'),
+          //         if (_content.numberofSeasons != null)
+          //           _buildInfoRow('Sezon Sayısı:', '${_content.numberofSeasons}'),
+          //         if (_content.genres != null && _content.genres!.isNotEmpty)
+          //           _buildInfoRow('Türler:', _content.getGenresAsString()),
+          //       ],
+          //     ),
+          //   ),
+          // ),
         ],
       ),
     );
