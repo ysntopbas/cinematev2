@@ -5,7 +5,7 @@ import 'package:cinematev2/models/movie_models.dart';
 
 class MovieDetailsModels extends Movie {
   final String? backdropPath;
-  final String? firstAirDate;
+  final String? releaseDate;
   final List<dynamic>? genres;
   final String? homepage;
   final String? lastAirDate;
@@ -24,7 +24,7 @@ class MovieDetailsModels extends Movie {
     required super.title,
     required super.posterPath,
     required this.backdropPath,
-    required this.firstAirDate,
+    required this.releaseDate,
     required this.genres,
     required this.homepage,
     required this.lastAirDate,
@@ -45,7 +45,7 @@ class MovieDetailsModels extends Movie {
       title: json['title'] ?? 'İsimsiz Film',
       posterPath: json['poster_path'] ?? '',
       backdropPath: json['backdrop_path'] ?? '',
-      firstAirDate: json['release_date'] ?? '',
+      releaseDate: json['release_date'] ?? '',
       genres: json['genres'] ?? [],
       homepage: json['homepage'] ?? '',
       lastAirDate: json['last_air_date'] ?? '',

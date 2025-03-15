@@ -16,6 +16,7 @@ class _DetailPageState extends State<DetailPage> {
   dynamic _content;
   bool _isLoading = true;
   String? _error;
+  bool _isMovie = true;
 
   @override
   void didChangeDependencies() {
@@ -28,9 +29,9 @@ class _DetailPageState extends State<DetailPage> {
       final args =
           ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
       final int id = args['id'];
-      final bool isMovie = args['isMovie'];
+      _isMovie = args['isMovie'];
 
-      if (isMovie) {
+      if (_isMovie) {
         _content = await _movieService.fetchDetailMovies(id);
       } else {
         _content = await _tvshowService.fetchDetailMovies(id);
@@ -128,74 +129,69 @@ class _DetailPageState extends State<DetailPage> {
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
+                                const SizedBox(
+                                  width: 16,
+                                ),
+                                Text(
+                                  '(${_content.voteCount ?? 0} oy)',
+                                ),
                               ],
                             ),
+                            const SizedBox(
+                              height: 8,
+                            ),
+                            Text(
+                              _isMovie
+                                  ? 'Çıkış Tarihi: ${_content.releaseDate}'
+                                  : 'İlk Yayın Tarihi: ${_content.firstAirDate}',
+                            ),
+                            Text(_isMovie
+                                ? 'Filmin Orjinal Dili : ${_content.originalLanguage}'
+                                : 'Dizinin Orjinal Dili : ${_content.originalLanguage}'),
+                            if (!_isMovie) ...[
+                              Text('Durum: ${_content.status}'),
+                              Text(
+                                  'Bölüm Sayısı: ${_content.numberofEpisodes}'),
+                              Text('Sezon Sayısı: ${_content.numberofSeasons}'),
+                            ]
                           ],
                         ),
                       )
                     ],
-                  )
+                  ),
+                  const SizedBox(height: 16),
+                  if (_content.genres != null && _content.genres!.isNotEmpty)
+                    Wrap(
+                      spacing: 8,
+                      children: _content.genres!.map<Widget>((genre) {
+                        return Chip(
+                          label: Text(
+                            genre['name'],
+                            style: TextStyle(
+                                color: Theme.of(context).colorScheme.onPrimary),
+                          ),
+                          backgroundColor:
+                              Theme.of(context).colorScheme.primary,
+                        );
+                      }).toList(),
+                    ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Genel Bakış',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text(
+                    _content.overview ?? 'Açıklama bulunmuyor',
+                    style: const TextStyle(fontSize: 16),
+                  ),
+                  const SizedBox(height: 16),
                 ],
               ),
             ),
           )
-          // SliverToBoxAdapter(
-          //   child: Padding(
-          //     padding: const EdgeInsets.all(16.0),
-          //     child: Column(
-          //       crossAxisAlignment: CrossAxisAlignment.start,
-          //       children: [
-          //         if (_content.tagline != null && _content.tagline!.isNotEmpty)
-          //           Text(
-          //             _content.tagline!,
-          //             style: const TextStyle(
-          //               fontSize: 18,
-          //               fontStyle: FontStyle.italic,
-          //             ),
-          //           ),
-          //         const SizedBox(height: 16),
-          //         Text(
-          //           _content.overview ?? 'Açıklama bulunmuyor',
-          //           style: const TextStyle(fontSize: 16),
-          //         ),
-          //         const SizedBox(height: 16),
-          //         _buildInfoRow('Orijinal Dil:', _content.originalLanguage ?? ''),
-          //         _buildInfoRow('Yayın Tarihi:', _content.firstAirDate ?? ''),
-          //         _buildInfoRow('Puan:', '${_content.voteAverage ?? 0}/10'),
-          //         _buildInfoRow('Oy Sayısı:', '${_content.voteCount ?? 0}'),
-          //         _buildInfoRow('Durum:', _content.status ?? ''),
-          //         if (_content.numberofEpisodes != null)
-          //           _buildInfoRow('Bölüm Sayısı:', '${_content.numberofEpisodes}'),
-          //         if (_content.numberofSeasons != null)
-          //           _buildInfoRow('Sezon Sayısı:', '${_content.numberofSeasons}'),
-          //         if (_content.genres != null && _content.genres!.isNotEmpty)
-          //           _buildInfoRow('Türler:', _content.getGenresAsString()),
-          //       ],
-          //     ),
-          //   ),
-          // ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildInfoRow(String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Row(
-        children: [
-          Text(
-            label,
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 16,
-            ),
-          ),
-          const SizedBox(width: 8),
-          Text(
-            value,
-            style: const TextStyle(fontSize: 16),
-          ),
         ],
       ),
     );
