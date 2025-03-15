@@ -57,11 +57,16 @@ class _HomePageState extends State<HomePage> {
               ),
               child: Column(
                 children: [
-                  if (watchList.isEmpty)
+                  if (watchList.isEmpty) ...[
                     Center(
                       child: Text('Henüz izleme listenize film eklemediniz'),
-                    )
-                  else
+                    ),
+                    IconButton(
+                        onPressed: () {
+                          Navigator.pushNamed(context, '/movie');
+                        },
+                        icon: Icon(Icons.add_circle))
+                  ] else
                     Text('İzleme Listesi'),
                 ],
               ),
@@ -85,16 +90,21 @@ class _HomePageState extends State<HomePage> {
               ),
               child: Column(
                 children: [
-                  if (watchList.isEmpty)
+                  if (watchList.isEmpty) ...[
                     Column(
                       children: [
                         Center(
                           child:
                               Text('Henüz izleme listenize dizi eklemediniz'),
                         ),
+                        IconButton(
+                            onPressed: () {
+                              Navigator.pushNamed(context, '/tvshow');
+                            },
+                            icon: Icon(Icons.add_circle))
                       ],
                     )
-                  else
+                  ] else
                     Text('İzleme Listesi'),
                 ],
               ),
