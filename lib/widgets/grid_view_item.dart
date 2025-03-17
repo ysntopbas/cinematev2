@@ -1,25 +1,45 @@
 import 'package:cinematev2/configs/api_config.dart';
+import 'package:cinematev2/services/watch_list_service.dart';
 import 'package:flutter/material.dart';
 
 class GridViewItem extends StatefulWidget {
   final int id;
   final String title;
   final String posterPath;
+  final bool isMovie;
   const GridViewItem({
     super.key,
     required this.id,
     required this.title,
     required this.posterPath,
+    this.isMovie = true,
   });
 
   @override
   State<GridViewItem> createState() => _GridViewItemState();
 }
 
-bool isStar = false;
-bool isFavorite = false;
-
 class _GridViewItemState extends State<GridViewItem> {
+  final WatchListService _watchListService = WatchListService();
+
+  bool isFavorite = false;
+  bool isWatched = false;
+
+  void _toggleWatchList() async {
+    if (isWatched) {
+      _watchListService.removeFromWatchList(widget.id).toString();
+    } else {
+      await _watchListService.addToWatchList(
+        widget.id,
+        widget.title,
+        widget.isMovie ? 'movie' : 'series',
+      );
+    }
+    setState(() {
+      isWatched = !isWatched;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     // if (index == movies.length) {
@@ -101,25 +121,35 @@ class _GridViewItemState extends State<GridViewItem> {
           child: Column(
             children: [
               IconButton(
-                onPressed: () {
-                  setState(() {
-                    isFavorite = !isFavorite;
-                  });
-                },
+                onPressed: _toggleWatchList,
                 icon: Icon(
-                  isFavorite ? Icons.favorite : Icons.favorite_border,
+                  isWatched ? Icons.web_asset_off : Icons.web_asset,
                   color: Theme.of(context).colorScheme.primary,
+                  shadows: [
+                    Shadow(
+                      color: Colors.black,
+                      offset: Offset(1.5, 1.5),
+                      blurRadius: 2,
+                    ),
+                  ],
                 ),
               ),
               IconButton(
                   onPressed: () {
                     setState(() {
-                      isStar = !isStar;
+                      isFavorite = !isFavorite;
                     });
                   },
                   icon: Icon(
-                    isStar ? Icons.star : Icons.star_border,
+                    isFavorite ? Icons.favorite : Icons.favorite_border,
                     color: Theme.of(context).colorScheme.primary,
+                    shadows: [
+                      Shadow(
+                        color: Colors.black,
+                        offset: Offset(1.5, 1.5),
+                        blurRadius: 2,
+                      ),
+                    ],
                   )),
             ],
           ),

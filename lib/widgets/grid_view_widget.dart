@@ -71,7 +71,7 @@ class GridViewWidget extends StatelessWidget {
         return GestureDetector(
           onTap: () {
             Navigator.pushNamed(
-              context, 
+              context,
               '/detail',
               arguments: {
                 'id': contents[index].id,
