@@ -7,12 +7,14 @@ class GridViewItem extends StatefulWidget {
   final String title;
   final String posterPath;
   final bool isMovie;
+  final void Function()? onTap;
   const GridViewItem({
     super.key,
     required this.id,
     required this.title,
     required this.posterPath,
     this.isMovie = true,
+    required this.onTap,
   });
 
   @override
@@ -121,7 +123,8 @@ class _GridViewItemState extends State<GridViewItem> {
           child: Column(
             children: [
               IconButton(
-                onPressed: _toggleWatchList,
+                //onPressed: _toggleWatchList,
+                onPressed: widget.onTap,
                 icon: Icon(
                   isWatched ? Icons.web_asset_off : Icons.web_asset,
                   color: Theme.of(context).colorScheme.primary,

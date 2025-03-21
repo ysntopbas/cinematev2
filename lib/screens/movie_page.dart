@@ -78,6 +78,7 @@ class _MoviePageState extends State<MoviePage> {
               error: movieProvider.error,
               scrollController: _scrollController,
               hasMorePages: movieProvider.hasMorePages,
+              addWatchList: movieProvider.addMovieWatchList,
             );
           },
         ),

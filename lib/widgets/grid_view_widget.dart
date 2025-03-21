@@ -9,6 +9,7 @@ class GridViewWidget extends StatelessWidget {
   final ScrollController? scrollController;
   final bool hasMorePages;
   final bool isMovie;
+  final void Function(int id, String title) addWatchList;
 
   const GridViewWidget({
     super.key,
@@ -18,6 +19,7 @@ class GridViewWidget extends StatelessWidget {
     this.scrollController,
     this.hasMorePages = true,
     this.isMovie = true,
+    required this.addWatchList,
   });
 
   @override
@@ -83,6 +85,8 @@ class GridViewWidget extends StatelessWidget {
             id: contents[index].id,
             title: contents[index].title,
             posterPath: contents[index].posterPath,
+            onTap: () =>
+                addWatchList(contents[index].id, contents[index].title),
           ),
         );
       },

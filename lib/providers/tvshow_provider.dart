@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'package:cinematev2/models/tvshows_models.dart';
 import 'package:cinematev2/services/tvshow_service.dart';
+import 'package:cinematev2/services/watch_list_service.dart';
 import 'package:flutter/material.dart';
 
 class TvshowProvider extends ChangeNotifier {
@@ -15,6 +16,7 @@ class TvshowProvider extends ChangeNotifier {
   bool get isLoading => _isLoading;
   bool get hasMorePages => _hasMorePages;
   String? get error => _error;
+  final WatchListService _watchListService = WatchListService();
 
   Future<void> fetchPopularTvshows({bool refresh = false}) async {
     if (_isLoading) return;
@@ -50,6 +52,14 @@ class TvshowProvider extends ChangeNotifier {
     } finally {
       _isLoading = false;
       notifyListeners();
+    }
+  }
+
+  Future<void> addTvshowWatchList(int tvshowId, String title) async {
+    try {
+      await _watchListService.addToWatchList(tvshowId, title, 'series');
+    } catch (e) {
+      log('addTvshowWatchList error: $e');
     }
   }
 

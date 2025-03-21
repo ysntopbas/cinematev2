@@ -71,14 +71,15 @@ class _TvshowPageState extends State<TvshowPage> {
       body: RefreshIndicator(
         onRefresh: () => _fetchTvShows(refresh: true),
         child: Consumer<TvshowProvider>(
-          builder: (context, provider, child) {
+          builder: (context, tvShowprovider, child) {
             return GridViewWidget(
-              contents: provider.popularTvshows,
-              isLoading: provider.isLoading,
-              error: provider.error,
+              contents: tvShowprovider.popularTvshows,
+              isLoading: tvShowprovider.isLoading,
+              error: tvShowprovider.error,
               scrollController: _scrollController,
-              hasMorePages: provider.hasMorePages,
+              hasMorePages: tvShowprovider.hasMorePages,
               isMovie: false,
+              addWatchList: tvShowprovider.addTvshowWatchList,
             );
           },
         ),
