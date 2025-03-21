@@ -6,7 +6,9 @@ class GridViewItem extends StatefulWidget {
   final String title;
   final String posterPath;
   final bool isMovie;
+  final bool isAdded;
   final void Function()? onTap;
+  final void Function()? onRemove;
   const GridViewItem({
     super.key,
     required this.id,
@@ -14,6 +16,8 @@ class GridViewItem extends StatefulWidget {
     required this.posterPath,
     this.isMovie = true,
     required this.onTap,
+    required this.onRemove,
+    required this.isAdded,
   });
 
   @override
@@ -105,7 +109,7 @@ class _GridViewItemState extends State<GridViewItem> {
                 //onPressed: _toggleWatchList,
                 onPressed: widget.onTap,
                 icon: Icon(
-                  Icons.web_asset_off,
+                  Icons.web_asset,
                   color: Theme.of(context).colorScheme.primary,
                   shadows: [
                     Shadow(
@@ -119,7 +123,7 @@ class _GridViewItemState extends State<GridViewItem> {
               IconButton(
                   onPressed: () {},
                   icon: Icon(
-                    Icons.favorite,
+                    Icons.favorite_border_outlined,
                     color: Theme.of(context).colorScheme.primary,
                     shadows: [
                       Shadow(
