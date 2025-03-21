@@ -63,6 +63,14 @@ class TvshowProvider extends ChangeNotifier {
     }
   }
 
+  Future<void> removeTvshowWatchList(int tvshowId) async {
+    try {
+      await _watchListService.removeFromWatchList(tvshowId, 'series');
+    } catch (e) {
+      log('removeTvshowWatchList error: $e');
+    }
+  }
+
   void resetPagination() {
     _currentPage = 1;
     _popularTvshows = [];

@@ -1,5 +1,4 @@
 import 'package:cinematev2/configs/api_config.dart';
-import 'package:cinematev2/services/watch_list_service.dart';
 import 'package:flutter/material.dart';
 
 class GridViewItem extends StatefulWidget {
@@ -22,26 +21,6 @@ class GridViewItem extends StatefulWidget {
 }
 
 class _GridViewItemState extends State<GridViewItem> {
-  final WatchListService _watchListService = WatchListService();
-
-  bool isFavorite = false;
-  bool isWatched = false;
-
-  void _toggleWatchList() async {
-    if (isWatched) {
-      _watchListService.removeFromWatchList(widget.id).toString();
-    } else {
-      await _watchListService.addToWatchList(
-        widget.id,
-        widget.title,
-        widget.isMovie ? 'movie' : 'series',
-      );
-    }
-    setState(() {
-      isWatched = !isWatched;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     // if (index == movies.length) {
@@ -126,7 +105,7 @@ class _GridViewItemState extends State<GridViewItem> {
                 //onPressed: _toggleWatchList,
                 onPressed: widget.onTap,
                 icon: Icon(
-                  isWatched ? Icons.web_asset_off : Icons.web_asset,
+                  Icons.web_asset_off,
                   color: Theme.of(context).colorScheme.primary,
                   shadows: [
                     Shadow(
@@ -138,13 +117,9 @@ class _GridViewItemState extends State<GridViewItem> {
                 ),
               ),
               IconButton(
-                  onPressed: () {
-                    setState(() {
-                      isFavorite = !isFavorite;
-                    });
-                  },
+                  onPressed: () {},
                   icon: Icon(
-                    isFavorite ? Icons.favorite : Icons.favorite_border,
+                    Icons.favorite,
                     color: Theme.of(context).colorScheme.primary,
                     shadows: [
                       Shadow(

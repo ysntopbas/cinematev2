@@ -63,6 +63,15 @@ class MovieProvider extends ChangeNotifier {
     }
   }
 
+  Future<void> removeMovieWatchList(int movieId) async {
+    try {
+      await _watchListService.removeFromWatchList(movieId, 'movie');
+    } catch (e) {
+      log("Film izleme listesinden silerken hata: $e");
+      rethrow;
+    }
+  }
+
   void resetPagination() {
     _currentPage = 1;
     _popularMovies = [];
