@@ -72,26 +72,27 @@ class GridViewWidget extends StatelessWidget {
             ),
           );
         }
+        
+        final content = contents[index];
+        
         return GestureDetector(
           onTap: () {
             Navigator.pushNamed(
               context,
               '/detail',
               arguments: {
-                'id': contents[index].id,
+                'id': content.id,
                 'isMovie': isMovie,
               },
             );
           },
           child: GridViewItem(
-            id: contents[index].id,
-            title: contents[index].title,
-            posterPath: contents[index].posterPath,
-            onTap: () =>
-                addWatchList(contents[index].id, contents[index].title),
-            onRemove: () {
-              removeWatchList(contents[index].id);
-            },
+            id: content.id,
+            title: content.title,
+            posterPath: content.posterPath,
+            isAdded: content.isAdded,
+            onTap: () => addWatchList(content.id, content.title),
+            onRemove: () => removeWatchList(content.id),
           ),
         );
       },

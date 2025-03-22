@@ -45,6 +45,9 @@ class MovieProvider extends ChangeNotifier {
       }
 
       log("${movies.length} film başarıyla getirildi. Toplam: ${_popularMovies.length}");
+      
+      // İzleme listesi durumunu güncelle
+      await updateWatchListStatus();
     } catch (e) {
       log("Film getirme hatası: $e");
       _error = e.toString();
@@ -56,19 +59,15 @@ class MovieProvider extends ChangeNotifier {
 
   Future<void> addMovieWatchList(int movieId, String title) async {
     try {
-      // Film zaten izleme listesinde değilse ekleyelim
-      final movieInWatchList =
-          await _watchListService.getFetchWatchList('movie');
-      final isMovieInList = movieInWatchList.any((movie) =>
-          movie['id'].toString() == movieId.toString() &&
-          movie['isAdded'] == true);
-
-      if (!isMovieInList) {
-        await _watchListService.addToWatchList(movieId, title, 'movie');
-        log("Film izleme listesine eklendi.");
-      } else {
-        log("Film zaten izleme listesinde.");
+      await _watchListService.addToWatchList(movieId, title, 'movie');
+      
+      final index = _popularMovies.indexWhere((movie) => movie.id == movieId);
+      if (index != -1) {
+        _popularMovies[index].isAdded = true;
+        notifyListeners();
       }
+      
+      log("Film izleme listesine eklendi.");
     } catch (e) {
       log("Film izleme listesine eklerken hata: $e");
       rethrow;
@@ -77,19 +76,15 @@ class MovieProvider extends ChangeNotifier {
 
   Future<void> removeMovieWatchList(int movieId) async {
     try {
-      // Film izleme listesinde ise silelim
-      final movieInWatchList =
-          await _watchListService.getFetchWatchList('movie');
-      final isMovieInList = movieInWatchList.any((movie) =>
-          movie['id'].toString() == movieId.toString() &&
-          movie['isAdded'] == true);
-
-      if (isMovieInList) {
-        await _watchListService.removeFromWatchList(movieId, 'movie');
-        log("Film izleme listesinden silindi.");
-      } else {
-        log("Film izleme listesinde bulunmuyor.");
+      await _watchListService.removeFromWatchList(movieId, 'movie');
+      
+      final index = _popularMovies.indexWhere((movie) => movie.id == movieId);
+      if (index != -1) {
+        _popularMovies[index].isAdded = false;
+        notifyListeners();
       }
+      
+      log("Film izleme listesinden silindi.");
     } catch (e) {
       log("Film izleme listesinden silerken hata: $e");
       rethrow;
@@ -102,5 +97,21 @@ class MovieProvider extends ChangeNotifier {
     _hasMorePages = true;
     _error = null;
     notifyListeners();
+  }
+
+  Future<void> updateWatchListStatus() async {
+    try {
+      final watchList = await _watchListService.getFetchWatchList('movie');
+      
+      for (var movie in _popularMovies) {
+        movie.isAdded = watchList.any((item) => 
+          item['id'].toString() == movie.id.toString()
+        );
+      }
+      
+      notifyListeners();
+    } catch (e) {
+      log("İzleme listesi durumu güncellenirken hata: $e");
+    }
   }
 }

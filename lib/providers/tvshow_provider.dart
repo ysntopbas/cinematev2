@@ -46,6 +46,9 @@ class TvshowProvider extends ChangeNotifier {
       }
 
       log("${tvshows.length} dizi başarıyla getirildi. Toplam: ${_popularTvshows.length}");
+      
+      // İzleme listesi durumunu güncelle
+      await updateWatchListStatus();
     } catch (e) {
       log("Dizi getirme hatası: $e");
       _error = e.toString();
@@ -57,42 +60,36 @@ class TvshowProvider extends ChangeNotifier {
 
   Future<void> addTvShowWatchList(int tvshowId, String title) async {
     try {
-      // Film zaten izleme listesinde değilse ekleyelim
-      final tvshowInWatchList =
-          await _watchListService.getFetchWatchList('series');
-      final isTvShowInList = tvshowInWatchList.any((tvshow) =>
-          tvshow['id'].toString() == tvshowId.toString() &&
-          tvshow['isAdded'] == true);
-
-      if (!isTvShowInList) {
-        await _watchListService.addToWatchList(tvshowId, title, 'series');
-        log("Film izleme listesine eklendi.");
-      } else {
-        log("Film zaten izleme listesinde.");
+      await _watchListService.addToWatchList(tvshowId, title, 'series');
+      
+      // İzleme listesine eklenen dizinin durumunu güncelle
+      final index = _popularTvshows.indexWhere((tvshow) => tvshow.id == tvshowId);
+      if (index != -1) {
+        _popularTvshows[index].isAdded = true;
+        notifyListeners();
       }
+      
+      log("Dizi izleme listesine eklendi.");
     } catch (e) {
-      log("Film izleme listesine eklerken hata: $e");
+      log("Dizi izleme listesine eklerken hata: $e");
       rethrow;
     }
   }
 
   Future<void> removeTvShowWatchList(int tvshowId) async {
     try {
-      // Film izleme listesinde ise silelim
-      final tvshowInWatchList =
-          await _watchListService.getFetchWatchList('series');
-      final isTvShowInList = tvshowInWatchList.any((tvshow) =>
-          tvshow['id'].toString() == tvshowId.toString() &&
-          tvshow['isAdded'] == true);
-
-      if (isTvShowInList) {
-        await _watchListService.removeFromWatchList(tvshowId, 'series');
-        log("Film izleme listesinden silindi.");
-      } else {
-        log("Film izleme listesinde bulunmuyor.");
+      await _watchListService.removeFromWatchList(tvshowId, 'series');
+      
+      // İzleme listesinden çıkarılan dizinin durumunu güncelle
+      final index = _popularTvshows.indexWhere((tvshow) => tvshow.id == tvshowId);
+      if (index != -1) {
+        _popularTvshows[index].isAdded = false;
+        notifyListeners();
       }
+      
+      log("Dizi izleme listesinden silindi.");
     } catch (e) {
-      log("Film izleme listesinden silerken hata: $e");
+      log("Dizi izleme listesinden silerken hata: $e");
       rethrow;
     }
   }
@@ -103,5 +100,21 @@ class TvshowProvider extends ChangeNotifier {
     _hasMorePages = true;
     _error = null;
     notifyListeners();
+  }
+
+  Future<void> updateWatchListStatus() async {
+    try {
+      final watchList = await _watchListService.getFetchWatchList('series');
+      
+      for (var tvshow in _popularTvshows) {
+        tvshow.isAdded = watchList.any((item) => 
+          item['id'].toString() == tvshow.id.toString()
+        );
+      }
+      
+      notifyListeners();
+    } catch (e) {
+      log("İzleme listesi durumu güncellenirken hata: $e");
+    }
   }
 }

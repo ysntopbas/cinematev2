@@ -6,6 +6,7 @@ class GridViewItem extends StatelessWidget {
   final String title;
   final String posterPath;
   final bool isMovie;
+  final bool isAdded;
 
   final void Function()? onTap;
   final void Function()? onRemove;
@@ -17,6 +18,7 @@ class GridViewItem extends StatelessWidget {
     this.isMovie = true,
     required this.onTap,
     required this.onRemove,
+    this.isAdded = false,
   });
 
   @override
@@ -90,10 +92,9 @@ class GridViewItem extends StatelessWidget {
           child: Column(
             children: [
               IconButton(
-                //onPressed: _toggleWatchList,
-                onPressed: onTap,
+                onPressed: isAdded ? onRemove : onTap,
                 icon: Icon(
-                  Icons.web_asset,
+                  isAdded ? Icons.web_asset_off : Icons.web_asset,
                   color: Theme.of(context).colorScheme.primary,
                   shadows: [
                     Shadow(
