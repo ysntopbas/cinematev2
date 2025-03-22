@@ -22,6 +22,7 @@ class WatchListService {
             .set({
           'title': title,
           'type': type, // 'movie' veya 'series'
+          'isAdded': true,
           'addedAt': FieldValue.serverTimestamp(),
         });
       } else {
@@ -33,6 +34,7 @@ class WatchListService {
             .set({
           'title': title,
           'type': type, // 'movie' veya 'series'
+          'isAdded': true,
           'addedAt': FieldValue.serverTimestamp(),
         });
       }
@@ -61,6 +63,40 @@ class WatchListService {
       }
     } catch (e) {
       log('removeFromWatchList error: $e');
+      rethrow;
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> getFetchWatchList(String type) async {
+    try {
+      // Kullanıcının izleme listesi için uygun koleksiyonu seçiyoruz
+      var collection = type == 'movie'
+          ? _firestore
+              .collection('users')
+              .doc(userId)
+              .collection('watchListMovies')
+          : _firestore
+              .collection('users')
+              .doc(userId)
+              .collection('watchListSeries');
+
+      // Verileri çekiyoruz
+      var snapshot = await collection.get();
+
+      // Verileri bir listeye dönüştürüyoruz
+      List<Map<String, dynamic>> watchList = snapshot.docs.map((doc) {
+        return {
+          'id': doc.id,
+          'title': doc['title'],
+          'type': doc['type'],
+          'isAdded': doc['isAdded'],
+          'addedAt': doc['addedAt'],
+        };
+      }).toList();
+
+      return watchList;
+    } catch (e) {
+      log('getFetchWatchList error: $e');
       rethrow;
     }
   }

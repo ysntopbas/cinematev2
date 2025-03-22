@@ -8,12 +8,14 @@ class Movie extends Content {
     required super.id,
     required super.title,
     required super.posterPath,
+    required super.isAdded,
   });
   factory Movie.fromJson(Map<String, dynamic> json) {
     return Movie(
       id: json['id'] ?? 0,
       title: json['title'] ?? 'İsimsiz Film',
       posterPath: json['poster_path'] ?? '',
+      isAdded: false,
     );
   }
   static List<Movie> fromJsonList(String jsonString) {

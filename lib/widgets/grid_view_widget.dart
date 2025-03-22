@@ -9,7 +9,6 @@ class GridViewWidget extends StatelessWidget {
   final ScrollController? scrollController;
   final bool hasMorePages;
   final bool isMovie;
-  final bool isAdded;
   final void Function(int id, String title) addWatchList;
   final void Function(int id) removeWatchList;
 
@@ -23,7 +22,6 @@ class GridViewWidget extends StatelessWidget {
     this.isMovie = true,
     required this.addWatchList,
     required this.removeWatchList,
-    required this.isAdded,
   });
 
   @override
@@ -94,7 +92,6 @@ class GridViewWidget extends StatelessWidget {
             onRemove: () {
               removeWatchList(contents[index].id);
             },
-            isAdded: isAdded,
           ),
         );
       },

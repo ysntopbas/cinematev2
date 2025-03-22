@@ -55,19 +55,45 @@ class TvshowProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> addTvshowWatchList(int tvshowId, String title) async {
+  Future<void> addTvShowWatchList(int tvshowId, String title) async {
     try {
-      await _watchListService.addToWatchList(tvshowId, title, 'series');
+      // Film zaten izleme listesinde değilse ekleyelim
+      final tvshowInWatchList =
+          await _watchListService.getFetchWatchList('series');
+      final isTvShowInList = tvshowInWatchList.any((tvshow) =>
+          tvshow['id'].toString() == tvshowId.toString() &&
+          tvshow['isAdded'] == true);
+
+      if (!isTvShowInList) {
+        await _watchListService.addToWatchList(tvshowId, title, 'series');
+        log("Film izleme listesine eklendi.");
+      } else {
+        log("Film zaten izleme listesinde.");
+      }
     } catch (e) {
-      log('addTvshowWatchList error: $e');
+      log("Film izleme listesine eklerken hata: $e");
+      rethrow;
     }
   }
 
-  Future<void> removeTvshowWatchList(int tvshowId) async {
+  Future<void> removeTvShowWatchList(int tvshowId) async {
     try {
-      await _watchListService.removeFromWatchList(tvshowId, 'series');
+      // Film izleme listesinde ise silelim
+      final tvshowInWatchList =
+          await _watchListService.getFetchWatchList('series');
+      final isTvShowInList = tvshowInWatchList.any((tvshow) =>
+          tvshow['id'].toString() == tvshowId.toString() &&
+          tvshow['isAdded'] == true);
+
+      if (isTvShowInList) {
+        await _watchListService.removeFromWatchList(tvshowId, 'series');
+        log("Film izleme listesinden silindi.");
+      } else {
+        log("Film izleme listesinde bulunmuyor.");
+      }
     } catch (e) {
-      log('removeTvshowWatchList error: $e');
+      log("Film izleme listesinden silerken hata: $e");
+      rethrow;
     }
   }
 

@@ -8,12 +8,14 @@ class Tvshow extends Content {
     required super.id,
     required super.title,
     required super.posterPath,
+    required super.isAdded,
   });
   factory Tvshow.fromJson(Map<String, dynamic> json) {
     return Tvshow(
       id: json['id'] ?? 0,
       title: json['name'] ?? 'İsimsiz Dizi',
       posterPath: json['poster_path'] ?? '',
+      isAdded: false,
     );
   }
   static List<Tvshow> fromJsonList(String jsonString) {

@@ -1,12 +1,12 @@
 import 'package:cinematev2/configs/api_config.dart';
 import 'package:flutter/material.dart';
 
-class GridViewItem extends StatefulWidget {
+class GridViewItem extends StatelessWidget {
   final int id;
   final String title;
   final String posterPath;
   final bool isMovie;
-  final bool isAdded;
+
   final void Function()? onTap;
   final void Function()? onRemove;
   const GridViewItem({
@@ -17,26 +17,10 @@ class GridViewItem extends StatefulWidget {
     this.isMovie = true,
     required this.onTap,
     required this.onRemove,
-    required this.isAdded,
   });
 
   @override
-  State<GridViewItem> createState() => _GridViewItemState();
-}
-
-class _GridViewItemState extends State<GridViewItem> {
-  @override
   Widget build(BuildContext context) {
-    // if (index == movies.length) {
-    //   // Son eleman yükleniyor göstergesi
-    //   return const Center(
-    //     child: Padding(
-    //       padding: EdgeInsets.all(8.0),
-    //       child: CircularProgressIndicator(),
-    //     ),
-    //   );
-    // }
-
     return Stack(
       children: [
         Container(
@@ -52,9 +36,9 @@ class _GridViewItemState extends State<GridViewItem> {
                 child: ClipRRect(
                   borderRadius:
                       const BorderRadius.vertical(top: Radius.circular(8)),
-                  child: widget.posterPath.isNotEmpty
+                  child: posterPath.isNotEmpty
                       ? Image.network(
-                          '${ApiConfig.imageBaseUrl}${widget.posterPath}',
+                          '${ApiConfig.imageBaseUrl}$posterPath',
                           fit: BoxFit.cover,
                           errorBuilder: (context, error, stackTrace) {
                             return Icon(
@@ -90,7 +74,7 @@ class _GridViewItemState extends State<GridViewItem> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
-                  widget.title,
+                  title,
                   style: const TextStyle(fontSize: 16),
                   textAlign: TextAlign.center,
                   maxLines: 2,
@@ -107,7 +91,7 @@ class _GridViewItemState extends State<GridViewItem> {
             children: [
               IconButton(
                 //onPressed: _toggleWatchList,
-                onPressed: widget.onTap,
+                onPressed: onTap,
                 icon: Icon(
                   Icons.web_asset,
                   color: Theme.of(context).colorScheme.primary,

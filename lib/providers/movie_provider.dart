@@ -56,7 +56,19 @@ class MovieProvider extends ChangeNotifier {
 
   Future<void> addMovieWatchList(int movieId, String title) async {
     try {
-      await _watchListService.addToWatchList(movieId, title, 'movie');
+      // Film zaten izleme listesinde değilse ekleyelim
+      final movieInWatchList =
+          await _watchListService.getFetchWatchList('movie');
+      final isMovieInList = movieInWatchList.any((movie) =>
+          movie['id'].toString() == movieId.toString() &&
+          movie['isAdded'] == true);
+
+      if (!isMovieInList) {
+        await _watchListService.addToWatchList(movieId, title, 'movie');
+        log("Film izleme listesine eklendi.");
+      } else {
+        log("Film zaten izleme listesinde.");
+      }
     } catch (e) {
       log("Film izleme listesine eklerken hata: $e");
       rethrow;
@@ -65,7 +77,19 @@ class MovieProvider extends ChangeNotifier {
 
   Future<void> removeMovieWatchList(int movieId) async {
     try {
-      await _watchListService.removeFromWatchList(movieId, 'movie');
+      // Film izleme listesinde ise silelim
+      final movieInWatchList =
+          await _watchListService.getFetchWatchList('movie');
+      final isMovieInList = movieInWatchList.any((movie) =>
+          movie['id'].toString() == movieId.toString() &&
+          movie['isAdded'] == true);
+
+      if (isMovieInList) {
+        await _watchListService.removeFromWatchList(movieId, 'movie');
+        log("Film izleme listesinden silindi.");
+      } else {
+        log("Film izleme listesinde bulunmuyor.");
+      }
     } catch (e) {
       log("Film izleme listesinden silerken hata: $e");
       rethrow;

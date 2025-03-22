@@ -79,7 +79,8 @@ class _TvshowPageState extends State<TvshowPage> {
               scrollController: _scrollController,
               hasMorePages: tvShowprovider.hasMorePages,
               isMovie: false,
-              addWatchList: tvShowprovider.addTvshowWatchList,
+              addWatchList: tvShowprovider.addTvShowWatchList,
+              removeWatchList: tvShowprovider.removeTvShowWatchList,
             );
           },
         ),
