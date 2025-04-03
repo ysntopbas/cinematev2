@@ -144,7 +144,7 @@ class _HomePageState extends State<HomePage> {
                           listViewTvShow(homeProvider),
                       ],
                     ),
-                  )
+                  ),
                 ],
               ),
             );
