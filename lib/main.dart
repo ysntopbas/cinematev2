@@ -2,6 +2,7 @@ import 'package:cinematev2/firebase_options.dart';
 import 'package:cinematev2/providers/auth_provider.dart';
 import 'package:cinematev2/providers/home_page_provider.dart';
 import 'package:cinematev2/providers/tvshow_provider.dart';
+import 'package:cinematev2/screens/ai_advice_page.dart';
 import 'package:cinematev2/screens/detail_page.dart';
 import 'package:cinematev2/screens/home_page.dart';
 import 'package:cinematev2/screens/login_page.dart';
@@ -73,6 +74,7 @@ class MyApp extends StatelessWidget {
           '/movie': (context) => const MoviePage(),
           '/tvshow': (context) => const TvshowPage(),
           '/detail': (context) => const DetailPage(),
+          '/recommendations': (context) => const AiAdvicePage(),
         },
       ),
     );

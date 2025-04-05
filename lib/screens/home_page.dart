@@ -277,6 +277,13 @@ class _HomePageState extends State<HomePage> {
                 Navigator.pushNamed(context, '/tvshow');
               },
             ),
+            ListTile(
+              leading: const Icon(Icons.assistant),
+              title: const Text('CineMate Önerileri'),
+              onTap: () {
+                Navigator.pushNamed(context, '/recommendations');
+              },
+            ),
             Spacer(),
             Text(
                 textAlign: TextAlign.center,
