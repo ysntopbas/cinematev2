@@ -14,6 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:cinematev2/providers/movie_provider.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'providers/ai_recommendations_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -35,7 +36,8 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => AuthProvider()),
         ChangeNotifierProvider(create: (context) => MovieProvider()),
         ChangeNotifierProvider(create: (context) => TvshowProvider()),
-        ChangeNotifierProvider(create: (context) => HomePageProvider())
+        ChangeNotifierProvider(create: (context) => HomePageProvider()),
+        ChangeNotifierProvider(create: (_) => AiRecommendationsProvider()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
