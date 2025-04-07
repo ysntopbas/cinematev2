@@ -15,6 +15,28 @@ class AiAdvicePage extends StatefulWidget {
 class _AiAdvicePageState extends State<AiAdvicePage> {
   final WatchListService _watchListService = WatchListService();
   final AiService _aiService = AiService();
+  bool _isWatchListEmpty = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkWatchLists();
+  }
+
+  Future<void> _checkWatchLists() async {
+    try {
+      final movies = await _watchListService.getFetchWatchList('movie');
+      final series = await _watchListService.getFetchWatchList('series');
+
+      setState(() {
+        _isWatchListEmpty = !(movies.isEmpty || series.isEmpty);
+      });
+    } catch (e) {
+      setState(() {
+        _isWatchListEmpty = false;
+      });
+    }
+  }
 
   Future<void> _getRecommendations() async {
     final provider =
@@ -38,6 +60,7 @@ class _AiAdvicePageState extends State<AiAdvicePage> {
       provider.setRecommendations(recommendations);
     } catch (e) {
       provider.setLoading(false);
+      if (!mounted) return; // Bu satırı context hatasını fixler
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Hata oluştu: $e')),
       );
@@ -182,22 +205,31 @@ class _AiAdvicePageState extends State<AiAdvicePage> {
             padding: const EdgeInsets.all(16.0),
             child: SizedBox(
               width: double.infinity,
-              child: FilledButton(
-                onPressed: isLoading || !canGetNewRecommendations
-                    ? null
-                    : _getRecommendations,
-                child: isLoading
-                    ? const SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          valueColor:
-                              AlwaysStoppedAnimation<Color>(Colors.white),
-                        ),
-                      )
-                    : const Text('Öneri Al'),
-              ),
+              child: _isWatchListEmpty
+                  ? FilledButton(
+                      onPressed: isLoading || !canGetNewRecommendations
+                          ? null
+                          : _getRecommendations,
+                      child: isLoading
+                          ? const SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                valueColor:
+                                    AlwaysStoppedAnimation<Color>(Colors.white),
+                              ),
+                            )
+                          : const Text('Öneri Al'),
+                    )
+                  : const Text(
+                      'Öneri almak için izleme listenize en az bir film ve bir dizi ekleyin',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
             ),
           ),
         ],
