@@ -161,8 +161,8 @@ class _AiAdvicePageState extends State<AiAdvicePage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Container(
-                  width: showRecommendations ? 80 : 120,
-                  height: showRecommendations ? 80 : 120,
+                  width: showRecommendations ? 55 : 120,
+                  height: showRecommendations ? 55 : 120,
                   decoration: const BoxDecoration(
                     shape: BoxShape.circle,
                     image: DecorationImage(
