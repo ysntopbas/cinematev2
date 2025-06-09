@@ -28,7 +28,6 @@ void main() async {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -39,44 +38,51 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => HomePageProvider()),
         ChangeNotifierProvider(create: (_) => AiRecommendationsProvider()),
       ],
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'CineMate',
-        theme: ThemeData(
-            colorScheme: ColorScheme.light(
-          primary: Colors.amber,
-          secondary: Colors.grey[900]!,
-          surface: Colors.grey[900]!,
-          onSurface: Colors.amber,
-          onPrimary: Colors.grey[900]!,
-          onSecondary: Colors.amber,
-        )),
-        home: Consumer<AuthProvider>(
-          builder: (context, value, child) {
-            if (value.isAuthenticated) {
-              return const HomePage();
-            } else {
-              return const LoginPage();
-            }
-          },
-        ),
-        routes: {
-          '/register': (context) {
-            return Consumer<AuthProvider>(
+      child: Consumer2<AuthProvider, AiRecommendationsProvider>(
+        builder: (context, authProvider, aiProvider, child) {
+          // AI provider'ını auth provider'a bağla
+          authProvider.setAiProvider(aiProvider);
+
+          return MaterialApp(
+            debugShowCheckedModeBanner: false,
+            title: 'CineMate',
+            theme: ThemeData(
+                colorScheme: ColorScheme.light(
+              primary: Colors.amber,
+              secondary: Colors.grey[900]!,
+              surface: Colors.grey[900]!,
+              onSurface: Colors.amber,
+              onPrimary: Colors.grey[900]!,
+              onSecondary: Colors.amber,
+            )),
+            home: Consumer<AuthProvider>(
               builder: (context, value, child) {
                 if (value.isAuthenticated) {
                   return const HomePage();
                 } else {
-                  return const RegisterPage();
+                  return const LoginPage();
                 }
               },
-            );
-          },
-          '/home': (context) => const HomePage(),
-          '/movie': (context) => const MoviePage(),
-          '/tvshow': (context) => const TvshowPage(),
-          '/detail': (context) => const DetailPage(),
-          '/recommendations': (context) => const AiAdvicePage(),
+            ),
+            routes: {
+              '/register': (context) {
+                return Consumer<AuthProvider>(
+                  builder: (context, value, child) {
+                    if (value.isAuthenticated) {
+                      return const HomePage();
+                    } else {
+                      return const RegisterPage();
+                    }
+                  },
+                );
+              },
+              '/home': (context) => const HomePage(),
+              '/movie': (context) => const MoviePage(),
+              '/tvshow': (context) => const TvshowPage(),
+              '/detail': (context) => const DetailPage(),
+              '/recommendations': (context) => const AiAdvicePage(),
+            },
+          );
         },
       ),
     );

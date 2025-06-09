@@ -14,9 +14,9 @@ class RegisterPage extends StatefulWidget {
 
 class _RegisterPageState extends State<RegisterPage> {
   late final TextEditingController _emailController;
-
   late final TextEditingController _passwordController;
   late final TextEditingController _passwordControllerConfirm;
+  final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -52,35 +52,38 @@ class _RegisterPageState extends State<RegisterPage> {
                   fontWeight: FontWeight.bold,
                 )),
             Form(
-              autovalidateMode: AutovalidateMode.always,
-              child: TextFieldWidget(
-                  validator: ValidationHelper.isEmailValid,
-                  contr: _emailController,
-                  hintText: "E-posta",
-                  keyboardType: TextInputType.emailAddress),
-            ),
-            Form(
-              autovalidateMode: AutovalidateMode.always,
-              child: TextFieldWidget(
-                  validator: ValidationHelper.isPasswordValid,
-                  contr: _passwordController,
-                  hintText: "Şifre",
-                  obscureText: true,
-                  keyboardType: TextInputType.visiblePassword),
-            ),
-            Form(
-              autovalidateMode: AutovalidateMode.always,
-              child: TextFieldWidget(
-                  contr: _passwordControllerConfirm,
-                  validator: (value) {
-                    if (value != _passwordController.text) {
-                      return 'Şifreler uyuşmuyor';
-                    }
-                    return null;
-                  },
-                  hintText: "Şifre Tekrar",
-                  obscureText: true,
-                  keyboardType: TextInputType.visiblePassword),
+              key: _formKey,
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              child: Column(
+                spacing: 20,
+                children: [
+                  TextFieldWidget(
+                    validator: ValidationHelper.isEmailValid,
+                    contr: _emailController,
+                    hintText: "E-posta",
+                    keyboardType: TextInputType.emailAddress,
+                  ),
+                  TextFieldWidget(
+                    validator: ValidationHelper.isPasswordValid,
+                    contr: _passwordController,
+                    hintText: "Şifre",
+                    obscureText: true,
+                    keyboardType: TextInputType.visiblePassword,
+                  ),
+                  TextFieldWidget(
+                    contr: _passwordControllerConfirm,
+                    validator: (value) {
+                      if (value != _passwordController.text) {
+                        return 'Şifreler uyuşmuyor';
+                      }
+                      return null;
+                    },
+                    hintText: "Şifre Tekrar",
+                    obscureText: true,
+                    keyboardType: TextInputType.visiblePassword,
+                  ),
+                ],
+              ),
             ),
             FilledButton(
               onPressed: () {

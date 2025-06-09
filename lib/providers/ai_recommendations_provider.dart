@@ -1,9 +1,12 @@
 import 'dart:developer';
-
 import 'package:flutter/foundation.dart';
 import 'dart:convert';
+import '../services/ai_recommendations_service.dart';
 
 class AiRecommendationsProvider with ChangeNotifier {
+  final AiRecommendationsService _recommendationsService =
+      AiRecommendationsService();
+
   Map<String, dynamic>? _recommendations;
   final Map<String, bool> _watchedItems = {};
   bool _isLoading = false;
@@ -24,6 +27,10 @@ class AiRecommendationsProvider with ChangeNotifier {
     _showRecommendations = true;
     _isLoading = false;
     _initializeWatchedItems();
+
+    // Yeni önerileri Firebase'e kaydet
+    _recommendationsService.saveUserRecommendations(recommendations);
+
     notifyListeners();
   }
 
@@ -37,13 +44,63 @@ class AiRecommendationsProvider with ChangeNotifier {
 
   void toggleWatched(String item) {
     _watchedItems[item] = !(_watchedItems[item] ?? false);
+
+    // İzleme durumunu Firebase'e kaydet
+    _recommendationsService.updateWatchedStatus(_watchedItems);
+
     notifyListeners();
   }
 
-  void resetRecommendations() {
+  Future<void> resetRecommendations() async {
     _recommendations = null;
     _showRecommendations = false;
     _watchedItems.clear();
+
+    // Firebase'den önerileri temizle
+    await _recommendationsService.clearUserRecommendations();
+
+    notifyListeners();
+  }
+
+  // Kullanıcının Firebase'deki önerilerini yükle
+  Future<void> loadUserRecommendations() async {
+    try {
+      final savedData = await _recommendationsService.getUserRecommendations();
+
+      if (savedData != null) {
+        _recommendations = savedData['recommendations'];
+        _showRecommendations = true;
+
+        // Kayıtlı izleme durumlarını yükle
+        final savedWatchedItems =
+            Map<String, bool>.from(savedData['watchedItems'] ?? {});
+        _watchedItems.clear();
+        _watchedItems.addAll(savedWatchedItems);
+
+        _initializeWatchedItems();
+        notifyListeners();
+      }
+    } catch (e) {
+      log('Kullanıcı önerileri yüklenirken hata: $e');
+    }
+  }
+
+  // Kullanıcının önerileri olup olmadığını kontrol et
+  Future<bool> hasUserRecommendations() async {
+    try {
+      return await _recommendationsService.hasUserRecommendations();
+    } catch (e) {
+      log('Öneri kontrolü yapılırken hata: $e');
+      return false;
+    }
+  }
+
+  // Kullanıcı değiştiğinde tüm verileri temizle
+  void clearAllData() {
+    _recommendations = null;
+    _showRecommendations = false;
+    _watchedItems.clear();
+    _isLoading = false;
     notifyListeners();
   }
 

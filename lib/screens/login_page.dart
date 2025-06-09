@@ -16,6 +16,8 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   late final TextEditingController _emailController;
   late final TextEditingController _passwordController;
+  final _formKey = GlobalKey<FormState>();
+
   @override
   void initState() {
     _emailController = TextEditingController();
@@ -48,22 +50,26 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ),
             Form(
-              autovalidateMode: AutovalidateMode.always,
-              child: TextFieldWidget(
-                validator: ValidationHelper.isEmailValid,
-                contr: _emailController,
-                hintText: "E-posta",
-                keyboardType: TextInputType.emailAddress,
+              key: _formKey,
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              child: Column(
+                spacing: 20,
+                children: [
+                  TextFieldWidget(
+                    validator: ValidationHelper.isEmailValid,
+                    contr: _emailController,
+                    hintText: "E-posta",
+                    keyboardType: TextInputType.emailAddress,
+                  ),
+                  TextFieldWidget(
+                    validator: ValidationHelper.isPasswordValid,
+                    contr: _passwordController,
+                    hintText: "Şifre",
+                    obscureText: true,
+                    keyboardType: TextInputType.visiblePassword,
+                  ),
+                ],
               ),
-            ),
-            Form(
-              autovalidateMode: AutovalidateMode.always,
-              child: TextFieldWidget(
-                  validator: ValidationHelper.isPasswordValid,
-                  contr: _passwordController,
-                  hintText: "Şifre",
-                  obscureText: true,
-                  keyboardType: TextInputType.visiblePassword),
             ),
             FilledButton(
               onPressed: () async {

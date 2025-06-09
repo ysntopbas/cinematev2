@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../services/watch_list_service.dart';
 import '../services/ai_service.dart';
 import '../providers/ai_recommendations_provider.dart';
+import '../providers/auth_provider.dart' as app_auth;
 import 'dart:convert';
 
 class AiAdvicePage extends StatefulWidget {
@@ -16,11 +17,41 @@ class _AiAdvicePageState extends State<AiAdvicePage> {
   final WatchListService _watchListService = WatchListService();
   final AiService _aiService = AiService();
   bool _isWatchListEmpty = false;
+  String? _currentUserId;
 
   @override
   void initState() {
     super.initState();
     _checkWatchLists();
+    _loadExistingRecommendations();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _checkUserChange();
+  }
+
+  void _checkUserChange() {
+    final authProvider =
+        Provider.of<app_auth.AuthProvider>(context, listen: false);
+    final currentUserId = authProvider.user?.uid;
+
+    // Kullanıcı değiştiyse AI verilerini yeniden yükle
+    if (_currentUserId != currentUserId) {
+      _currentUserId = currentUserId;
+      if (currentUserId != null) {
+        _loadExistingRecommendations();
+      }
+    }
+  }
+
+  Future<void> _loadExistingRecommendations() async {
+    final provider =
+        Provider.of<AiRecommendationsProvider>(context, listen: false);
+
+    // Kullanıcının mevcut önerilerini kontrol et ve yükle
+    await provider.loadUserRecommendations();
   }
 
   Future<void> _checkWatchLists() async {
@@ -41,6 +72,10 @@ class _AiAdvicePageState extends State<AiAdvicePage> {
   Future<void> _getRecommendations() async {
     final provider =
         Provider.of<AiRecommendationsProvider>(context, listen: false);
+
+    // Önce önceki önerileri temizle
+    await provider.resetRecommendations();
+
     provider.setLoading(true);
 
     try {
