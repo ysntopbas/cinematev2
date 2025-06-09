@@ -18,8 +18,8 @@ class AuthProvider extends ChangeNotifier {
 
   AuthProvider() {
     _authService.user.listen((User? user) {
-      final previousUser = this._user;
-      this._user = user;
+      final previousUser = _user;
+      _user = user;
 
       if (user == null) {
         _isAuthenticated = false;
