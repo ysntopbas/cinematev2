@@ -284,6 +284,13 @@ class _HomePageState extends State<HomePage> {
                 Navigator.pushNamed(context, '/recommendations');
               },
             ),
+            ListTile(
+              leading: const Icon(Icons.favorite),
+              title: const Text('Favorilerim'),
+              onTap: () {
+                Navigator.pushNamed(context, '/favorites');
+              },
+            ),
             Spacer(),
             Text(
                 textAlign: TextAlign.center,

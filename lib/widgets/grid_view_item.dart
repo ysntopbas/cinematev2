@@ -7,9 +7,12 @@ class GridViewItem extends StatelessWidget {
   final String posterPath;
   final bool isMovie;
   final bool isAdded;
+  final bool isFavorite;
 
   final void Function()? onTap;
   final void Function()? onRemove;
+  final void Function()? onFavoriteTap;
+
   const GridViewItem({
     super.key,
     required this.id,
@@ -19,6 +22,8 @@ class GridViewItem extends StatelessWidget {
     required this.onTap,
     required this.onRemove,
     this.isAdded = false,
+    this.isFavorite = false,
+    this.onFavoriteTap,
   });
 
   @override
@@ -106,18 +111,21 @@ class GridViewItem extends StatelessWidget {
                 ),
               ),
               IconButton(
-                  onPressed: () {},
-                  icon: Icon(
-                    Icons.favorite_border_outlined,
-                    color: Theme.of(context).colorScheme.primary,
-                    shadows: [
-                      Shadow(
-                        color: Colors.black,
-                        offset: Offset(1.5, 1.5),
-                        blurRadius: 2,
-                      ),
-                    ],
-                  )),
+                onPressed: onFavoriteTap,
+                icon: Icon(
+                  isFavorite ? Icons.favorite : Icons.favorite_border_outlined,
+                  color: isFavorite
+                      ? Colors.red
+                      : Theme.of(context).colorScheme.primary,
+                  shadows: [
+                    Shadow(
+                      color: Colors.black,
+                      offset: Offset(1.5, 1.5),
+                      blurRadius: 2,
+                    ),
+                  ],
+                ),
+              ),
             ],
           ),
         ),

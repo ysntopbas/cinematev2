@@ -1,6 +1,7 @@
 import 'package:cinematev2/models/movie_models.dart';
 import 'package:cinematev2/services/movie_service.dart';
 import 'package:cinematev2/services/watch_list_service.dart';
+import 'package:cinematev2/services/favorite_service.dart';
 import 'package:flutter/material.dart';
 import 'dart:developer';
 
@@ -17,6 +18,10 @@ class MovieProvider extends ChangeNotifier {
   bool get hasMorePages => _hasMorePages;
   String? get error => _error;
   final WatchListService _watchListService = WatchListService();
+  final FavoriteService _favoriteService = FavoriteService();
+
+  // Favori durumları için cache
+  final Map<int, bool> _favoriteStatus = {};
 
   Future<void> fetchPopularMovies({bool refresh = false}) async {
     if (_isLoading) return;
@@ -45,9 +50,10 @@ class MovieProvider extends ChangeNotifier {
       }
 
       log("${movies.length} film başarıyla getirildi. Toplam: ${_popularMovies.length}");
-      
-      // İzleme listesi durumunu güncelle
+
+      // İzleme listesi ve favori durumunu güncelle
       await updateWatchListStatus();
+      await loadFavoriteStatuses();
     } catch (e) {
       log("Film getirme hatası: $e");
       _error = e.toString();
@@ -60,13 +66,13 @@ class MovieProvider extends ChangeNotifier {
   Future<void> addMovieWatchList(int movieId, String title) async {
     try {
       await _watchListService.addToWatchList(movieId, title, 'movie');
-      
+
       final index = _popularMovies.indexWhere((movie) => movie.id == movieId);
       if (index != -1) {
         _popularMovies[index].isAdded = true;
         notifyListeners();
       }
-      
+
       log("Film izleme listesine eklendi.");
     } catch (e) {
       log("Film izleme listesine eklerken hata: $e");
@@ -77,13 +83,13 @@ class MovieProvider extends ChangeNotifier {
   Future<void> removeMovieWatchList(int movieId) async {
     try {
       await _watchListService.removeFromWatchList(movieId, 'movie');
-      
+
       final index = _popularMovies.indexWhere((movie) => movie.id == movieId);
       if (index != -1) {
         _popularMovies[index].isAdded = false;
         notifyListeners();
       }
-      
+
       log("Film izleme listesinden silindi.");
     } catch (e) {
       log("Film izleme listesinden silerken hata: $e");
@@ -102,16 +108,55 @@ class MovieProvider extends ChangeNotifier {
   Future<void> updateWatchListStatus() async {
     try {
       final watchList = await _watchListService.getFetchWatchList('movie');
-      
+
       for (var movie in _popularMovies) {
-        movie.isAdded = watchList.any((item) => 
-          item['id'].toString() == movie.id.toString()
-        );
+        movie.isAdded = watchList
+            .any((item) => item['id'].toString() == movie.id.toString());
       }
-      
+
       notifyListeners();
     } catch (e) {
       log("İzleme listesi durumu güncellenirken hata: $e");
+    }
+  }
+
+  // Favori durumunu kontrol et
+  bool isFavorite(int id) {
+    return _favoriteStatus[id] ?? false;
+  }
+
+  // Favori toggle
+  Future<void> toggleFavorite(
+      int id, String title, String type, String posterPath) async {
+    try {
+      final currentStatus = _favoriteStatus[id] ?? false;
+
+      if (currentStatus) {
+        await _favoriteService.removeFromFavorites(id);
+        _favoriteStatus[id] = false;
+        log("Film favorilerden çıkarıldı: $title");
+      } else {
+        await _favoriteService.addToFavorites(id, title, type, posterPath);
+        _favoriteStatus[id] = true;
+        log("Film favorilere eklendi: $title");
+      }
+
+      notifyListeners();
+    } catch (e) {
+      log("Favori toggle işleminde hata: $e");
+    }
+  }
+
+  // Favori durumlarını yükle
+  Future<void> loadFavoriteStatuses() async {
+    try {
+      for (var movie in _popularMovies) {
+        final isFav = await _favoriteService.isFavorite(movie.id);
+        _favoriteStatus[movie.id] = isFav;
+      }
+      notifyListeners();
+    } catch (e) {
+      log("Favori durumları yüklenirken hata: $e");
     }
   }
 }

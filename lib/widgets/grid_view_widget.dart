@@ -11,6 +11,9 @@ class GridViewWidget extends StatelessWidget {
   final bool isMovie;
   final void Function(int id, String title) addWatchList;
   final void Function(int id) removeWatchList;
+  final void Function(int id, String title, String type, String posterPath)?
+      onFavoriteTap;
+  final bool Function(int id)? isFavorite;
 
   const GridViewWidget({
     super.key,
@@ -22,6 +25,8 @@ class GridViewWidget extends StatelessWidget {
     this.isMovie = true,
     required this.addWatchList,
     required this.removeWatchList,
+    this.onFavoriteTap,
+    this.isFavorite,
   });
 
   @override
@@ -72,9 +77,9 @@ class GridViewWidget extends StatelessWidget {
             ),
           );
         }
-        
+
         final content = contents[index];
-        
+
         return GestureDetector(
           onTap: () {
             Navigator.pushNamed(
@@ -91,8 +96,14 @@ class GridViewWidget extends StatelessWidget {
             title: content.title,
             posterPath: content.posterPath,
             isAdded: content.isAdded,
+            isFavorite: isFavorite?.call(content.id) ?? false,
+            isMovie: isMovie,
             onTap: () => addWatchList(content.id, content.title),
             onRemove: () => removeWatchList(content.id),
+            onFavoriteTap: onFavoriteTap != null
+                ? () => onFavoriteTap!(content.id, content.title,
+                    isMovie ? 'movie' : 'tv', content.posterPath)
+                : null,
           ),
         );
       },

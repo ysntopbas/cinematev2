@@ -167,6 +167,8 @@ class _MoviePageState extends State<MoviePage> {
                     isMovie: true,
                     addWatchList: movieProvider.addMovieWatchList,
                     removeWatchList: movieProvider.removeMovieWatchList,
+                    onFavoriteTap: movieProvider.toggleFavorite,
+                    isFavorite: movieProvider.isFavorite,
                   );
                 },
               ),
@@ -211,6 +213,8 @@ class _MoviePageState extends State<MoviePage> {
       isMovie: true,
       addWatchList: movieProvider.addMovieWatchList,
       removeWatchList: movieProvider.removeMovieWatchList,
+      onFavoriteTap: movieProvider.toggleFavorite,
+      isFavorite: movieProvider.isFavorite,
     );
   }
 }

@@ -167,6 +167,8 @@ class _TvshowPageState extends State<TvshowPage> {
                     isMovie: false,
                     addWatchList: tvShowprovider.addTvShowWatchList,
                     removeWatchList: tvShowprovider.removeTvShowWatchList,
+                    onFavoriteTap: tvShowprovider.toggleFavorite,
+                    isFavorite: tvShowprovider.isFavorite,
                   );
                 },
               ),
@@ -211,6 +213,8 @@ class _TvshowPageState extends State<TvshowPage> {
       isMovie: false,
       addWatchList: tvshowProvider.addTvShowWatchList,
       removeWatchList: tvshowProvider.removeTvShowWatchList,
+      onFavoriteTap: tvshowProvider.toggleFavorite,
+      isFavorite: tvshowProvider.isFavorite,
     );
   }
 }

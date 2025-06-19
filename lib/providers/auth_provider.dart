@@ -2,6 +2,7 @@ import 'package:cinematev2/services/auth_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'ai_recommendations_provider.dart';
+import 'favorite_provider.dart';
 
 class AuthProvider extends ChangeNotifier {
   final AuthService _authService = AuthService();
@@ -11,9 +12,14 @@ class AuthProvider extends ChangeNotifier {
   User? get user => _user;
 
   AiRecommendationsProvider? _aiProvider;
+  FavoriteProvider? _favoriteProvider;
 
   void setAiProvider(AiRecommendationsProvider aiProvider) {
     _aiProvider = aiProvider;
+  }
+
+  void setFavoriteProvider(FavoriteProvider favoriteProvider) {
+    _favoriteProvider = favoriteProvider;
   }
 
   AuthProvider() {
@@ -23,13 +29,15 @@ class AuthProvider extends ChangeNotifier {
 
       if (user == null) {
         _isAuthenticated = false;
-        // Kullanıcı çıkış yaptığında AI verilerini temizle
+        // Kullanıcı çıkış yaptığında tüm verilerini temizle
         _aiProvider?.clearAllData();
+        _favoriteProvider?.clearAllData();
       } else {
         _isAuthenticated = true;
-        // Farklı bir kullanıcı giriş yaptığında AI verilerini temizle
+        // Farklı bir kullanıcı giriş yaptığında tüm verilerini temizle
         if (previousUser != null && previousUser.uid != user.uid) {
           _aiProvider?.clearAllData();
+          _favoriteProvider?.clearAllData();
         }
       }
       notifyListeners();
@@ -60,8 +68,9 @@ class AuthProvider extends ChangeNotifier {
     if (_isAuthenticated) {
       _authService.logout();
       _isAuthenticated = false;
-      // Çıkış yapıldığında AI verilerini temizle
+      // Çıkış yapıldığında tüm verilerini temizle
       _aiProvider?.clearAllData();
+      _favoriteProvider?.clearAllData();
       notifyListeners();
     }
   }

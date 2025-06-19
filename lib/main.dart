@@ -4,6 +4,7 @@ import 'package:cinematev2/providers/home_page_provider.dart';
 import 'package:cinematev2/providers/tvshow_provider.dart';
 import 'package:cinematev2/screens/ai_advice_page.dart';
 import 'package:cinematev2/screens/detail_page.dart';
+import 'package:cinematev2/screens/favorites_page.dart';
 import 'package:cinematev2/screens/home_page.dart';
 import 'package:cinematev2/screens/login_page.dart';
 import 'package:cinematev2/screens/movie_page.dart';
@@ -15,6 +16,7 @@ import 'package:provider/provider.dart';
 import 'package:cinematev2/providers/movie_provider.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'providers/ai_recommendations_provider.dart';
+import 'providers/favorite_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -37,11 +39,14 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => TvshowProvider()),
         ChangeNotifierProvider(create: (context) => HomePageProvider()),
         ChangeNotifierProvider(create: (_) => AiRecommendationsProvider()),
+        ChangeNotifierProvider(create: (_) => FavoriteProvider()),
       ],
-      child: Consumer2<AuthProvider, AiRecommendationsProvider>(
-        builder: (context, authProvider, aiProvider, child) {
-          // AI provider'ını auth provider'a bağla
+      child:
+          Consumer3<AuthProvider, AiRecommendationsProvider, FavoriteProvider>(
+        builder: (context, authProvider, aiProvider, favoriteProvider, child) {
+          // Provider'ları auth provider'a bağla
           authProvider.setAiProvider(aiProvider);
+          authProvider.setFavoriteProvider(favoriteProvider);
 
           return MaterialApp(
             debugShowCheckedModeBanner: false,
@@ -81,6 +86,7 @@ class MyApp extends StatelessWidget {
               '/tvshow': (context) => const TvshowPage(),
               '/detail': (context) => const DetailPage(),
               '/recommendations': (context) => const AiAdvicePage(),
+              '/favorites': (context) => const FavoritesPage(),
             },
           );
         },
