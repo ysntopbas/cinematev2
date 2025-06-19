@@ -100,4 +100,20 @@ class FavoriteService {
       return [];
     }
   }
+
+  // Tüm favori ID'lerini bir seferde getir (performans için)
+  Future<Set<int>> getAllFavoriteIds() async {
+    try {
+      final querySnapshot = await _firestore
+          .collection('users')
+          .doc(userId)
+          .collection('favorites')
+          .get();
+
+      return querySnapshot.docs.map((doc) => doc.data()['id'] as int).toSet();
+    } catch (e) {
+      log("Favori ID'leri getirilirken hata: $e");
+      return <int>{};
+    }
+  }
 }

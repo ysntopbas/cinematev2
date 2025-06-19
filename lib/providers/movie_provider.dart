@@ -22,6 +22,7 @@ class MovieProvider extends ChangeNotifier {
 
   // Favori durumları için cache
   final Map<int, bool> _favoriteStatus = {};
+  bool _favoritesLoaded = false;
 
   Future<void> fetchPopularMovies({bool refresh = false}) async {
     if (_isLoading) return;
@@ -51,9 +52,17 @@ class MovieProvider extends ChangeNotifier {
 
       log("${movies.length} film başarıyla getirildi. Toplam: ${_popularMovies.length}");
 
-      // İzleme listesi ve favori durumunu güncelle
+      // İzleme listesi durumunu güncelle
       await updateWatchListStatus();
-      await loadFavoriteStatuses();
+
+      // Favori durumlarını sadece ilk seferde yükle
+      if (!_favoritesLoaded) {
+        await loadFavoriteStatuses();
+        _favoritesLoaded = true;
+      } else {
+        // Sadece yeni eklenen filmler için favori durumunu kontrol et
+        await loadFavoriteStatusesForNewMovies(movies);
+      }
     } catch (e) {
       log("Film getirme hatası: $e");
       _error = e.toString();
@@ -147,16 +156,44 @@ class MovieProvider extends ChangeNotifier {
     }
   }
 
-  // Favori durumlarını yükle
+  // Favori durumlarını yükle (optimize edilmiş)
   Future<void> loadFavoriteStatuses() async {
     try {
+      // Tüm favori ID'lerini bir seferde getir
+      final favoriteIds = await _favoriteService.getAllFavoriteIds();
+
+      // Mevcut filmlerin favori durumlarını güncelle
       for (var movie in _popularMovies) {
-        final isFav = await _favoriteService.isFavorite(movie.id);
-        _favoriteStatus[movie.id] = isFav;
+        _favoriteStatus[movie.id] = favoriteIds.contains(movie.id);
       }
+
       notifyListeners();
+      log("${favoriteIds.length} favori durum güncellendi");
     } catch (e) {
       log("Favori durumları yüklenirken hata: $e");
     }
+  }
+
+  // Sadece yeni eklenen filmler için favori durumunu kontrol et
+  Future<void> loadFavoriteStatusesForNewMovies(List<Movie> newMovies) async {
+    try {
+      final favoriteIds = await _favoriteService.getAllFavoriteIds();
+
+      for (var movie in newMovies) {
+        _favoriteStatus[movie.id] = favoriteIds.contains(movie.id);
+      }
+
+      notifyListeners();
+      log("${newMovies.length} yeni film için favori durum kontrol edildi");
+    } catch (e) {
+      log("Yeni filmler için favori durumları yüklenirken hata: $e");
+    }
+  }
+
+  // Kullanıcı değiştiğinde cache'leri temizle
+  void clearCache() {
+    _favoriteStatus.clear();
+    _favoritesLoaded = false;
+    notifyListeners();
   }
 }

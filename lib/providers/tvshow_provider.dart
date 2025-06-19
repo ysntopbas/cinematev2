@@ -22,6 +22,7 @@ class TvshowProvider extends ChangeNotifier {
 
   // Favori durumları için cache
   final Map<int, bool> _favoriteStatus = {};
+  bool _favoritesLoaded = false;
 
   Future<void> fetchPopularTvshows({bool refresh = false}) async {
     if (_isLoading) return;
@@ -52,9 +53,17 @@ class TvshowProvider extends ChangeNotifier {
 
       log("${tvshows.length} dizi başarıyla getirildi. Toplam: ${_popularTvshows.length}");
 
-      // İzleme listesi ve favori durumunu güncelle
+      // İzleme listesi durumunu güncelle
       await updateWatchListStatus();
-      await loadFavoriteStatuses();
+
+      // Favori durumlarını sadece ilk seferde yükle
+      if (!_favoritesLoaded) {
+        await loadFavoriteStatuses();
+        _favoritesLoaded = true;
+      } else {
+        // Sadece yeni eklenen diziler için favori durumunu kontrol et
+        await loadFavoriteStatusesForNewTvshows(tvshows);
+      }
     } catch (e) {
       log("Dizi getirme hatası: $e");
       _error = e.toString();
@@ -129,16 +138,38 @@ class TvshowProvider extends ChangeNotifier {
     }
   }
 
-  // Favori durumlarını yükle
+  // Favori durumlarını yükle (optimize edilmiş)
   Future<void> loadFavoriteStatuses() async {
     try {
+      // Tüm favori ID'lerini bir seferde getir
+      final favoriteIds = await _favoriteService.getAllFavoriteIds();
+
+      // Mevcut dizilerin favori durumlarını güncelle
       for (var tvshow in _popularTvshows) {
-        final isFav = await _favoriteService.isFavorite(tvshow.id);
-        _favoriteStatus[tvshow.id] = isFav;
+        _favoriteStatus[tvshow.id] = favoriteIds.contains(tvshow.id);
       }
+
       notifyListeners();
+      log("${favoriteIds.length} favori durum güncellendi");
     } catch (e) {
       log("Favori durumları yüklenirken hata: $e");
+    }
+  }
+
+  // Sadece yeni eklenen diziler için favori durumunu kontrol et
+  Future<void> loadFavoriteStatusesForNewTvshows(
+      List<Tvshow> newTvshows) async {
+    try {
+      final favoriteIds = await _favoriteService.getAllFavoriteIds();
+
+      for (var tvshow in newTvshows) {
+        _favoriteStatus[tvshow.id] = favoriteIds.contains(tvshow.id);
+      }
+
+      notifyListeners();
+      log("${newTvshows.length} yeni dizi için favori durum kontrol edildi");
+    } catch (e) {
+      log("Yeni diziler için favori durumları yüklenirken hata: $e");
     }
   }
 
@@ -163,5 +194,12 @@ class TvshowProvider extends ChangeNotifier {
     } catch (e) {
       log("İzleme listesi durumu güncellenirken hata: $e");
     }
+  }
+
+  // Kullanıcı değiştiğinde cache'leri temizle
+  void clearCache() {
+    _favoriteStatus.clear();
+    _favoritesLoaded = false;
+    notifyListeners();
   }
 }

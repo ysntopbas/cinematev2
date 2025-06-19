@@ -10,7 +10,7 @@ class HomePageProvider extends ChangeNotifier {
   final WatchListService _watchListService = WatchListService();
   final MovieService _movieService = MovieService();
   final TvshowService _tvshowService = TvshowService();
-  
+
   List<Movie> _watchListMovies = [];
   List<Tvshow> _watchListTvshows = [];
   bool _isLoading = false;
@@ -27,41 +27,11 @@ class HomePageProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      // Film izleme listesini çek
-      final movieWatchList = await _watchListService.getFetchWatchList('movie');
-      _watchListMovies = [];
-
-      // Her film için detayları çek
-      for (var movie in movieWatchList) {
-        try {
-          final movieId = int.parse(movie['id']);
-          final movieDetails = await _movieService.fetchDetailMovies(movieId);
-          
-          // İzleme listesinde olduğunu işaretle
-          movieDetails.isAdded = true;
-          _watchListMovies.add(movieDetails);
-        } catch (e) {
-          log('Film detayları çekilirken hata: $e');
-        }
-      }
-
-      // Dizi izleme listesini çek
-      final tvshowWatchList = await _watchListService.getFetchWatchList('series');
-      _watchListTvshows = [];
-
-      // Her dizi için detayları çek
-      for (var tvshow in tvshowWatchList) {
-        try {
-          final tvshowId = int.parse(tvshow['id']);
-          final tvshowDetails = await _tvshowService.fetchDetailMovies(tvshowId);
-          
-          // İzleme listesinde olduğunu işaretle
-          tvshowDetails.isAdded = true;
-          _watchListTvshows.add(tvshowDetails);
-        } catch (e) {
-          log('Dizi detayları çekilirken hata: $e');
-        }
-      }
+      // Paralel olarak her iki listeyi de çek
+      await Future.wait([
+        _fetchMovieWatchList(),
+        _fetchTvshowWatchList(),
+      ]);
 
       log('İzleme listeleri başarıyla çekildi. Filmler: ${_watchListMovies.length}, Diziler: ${_watchListTvshows.length}');
     } catch (e) {
@@ -70,6 +40,62 @@ class HomePageProvider extends ChangeNotifier {
     } finally {
       _isLoading = false;
       notifyListeners();
+    }
+  }
+
+  Future<void> _fetchMovieWatchList() async {
+    try {
+      final movieWatchList = await _watchListService.getFetchWatchList('movie');
+      _watchListMovies = [];
+
+      // Sınırlı sayıda eşzamanlı istek (maksimum 3)
+      for (int i = 0; i < movieWatchList.length; i += 3) {
+        final batch = movieWatchList.skip(i).take(3);
+        final futures = batch.map((movie) => _fetchSingleMovie(movie)).toList();
+        await Future.wait(futures);
+      }
+    } catch (e) {
+      log('Film izleme listesi yüklenirken hata: $e');
+    }
+  }
+
+  Future<void> _fetchSingleMovie(Map<String, dynamic> movie) async {
+    try {
+      final movieId = int.parse(movie['id']);
+      final movieDetails = await _movieService.fetchDetailMovies(movieId);
+      movieDetails.isAdded = true;
+      _watchListMovies.add(movieDetails);
+    } catch (e) {
+      log('Film detayları çekilirken hata: $e');
+    }
+  }
+
+  Future<void> _fetchTvshowWatchList() async {
+    try {
+      final tvshowWatchList =
+          await _watchListService.getFetchWatchList('series');
+      _watchListTvshows = [];
+
+      // Sınırlı sayıda eşzamanlı istek (maksimum 3)
+      for (int i = 0; i < tvshowWatchList.length; i += 3) {
+        final batch = tvshowWatchList.skip(i).take(3);
+        final futures =
+            batch.map((tvshow) => _fetchSingleTvshow(tvshow)).toList();
+        await Future.wait(futures);
+      }
+    } catch (e) {
+      log('Dizi izleme listesi yüklenirken hata: $e');
+    }
+  }
+
+  Future<void> _fetchSingleTvshow(Map<String, dynamic> tvshow) async {
+    try {
+      final tvshowId = int.parse(tvshow['id']);
+      final tvshowDetails = await _tvshowService.fetchDetailMovies(tvshowId);
+      tvshowDetails.isAdded = true;
+      _watchListTvshows.add(tvshowDetails);
+    } catch (e) {
+      log('Dizi detayları çekilirken hata: $e');
     }
   }
 

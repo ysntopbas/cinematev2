@@ -41,12 +41,15 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => AiRecommendationsProvider()),
         ChangeNotifierProvider(create: (_) => FavoriteProvider()),
       ],
-      child:
-          Consumer3<AuthProvider, AiRecommendationsProvider, FavoriteProvider>(
-        builder: (context, authProvider, aiProvider, favoriteProvider, child) {
+      child: Consumer5<AuthProvider, AiRecommendationsProvider,
+          FavoriteProvider, MovieProvider, TvshowProvider>(
+        builder: (context, authProvider, aiProvider, favoriteProvider,
+            movieProvider, tvshowProvider, child) {
           // Provider'ları auth provider'a bağla
           authProvider.setAiProvider(aiProvider);
           authProvider.setFavoriteProvider(favoriteProvider);
+          authProvider.setMovieProvider(movieProvider);
+          authProvider.setTvshowProvider(tvshowProvider);
 
           return MaterialApp(
             debugShowCheckedModeBanner: false,

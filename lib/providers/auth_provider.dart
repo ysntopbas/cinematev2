@@ -3,6 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'ai_recommendations_provider.dart';
 import 'favorite_provider.dart';
+import 'movie_provider.dart';
+import 'tvshow_provider.dart';
 
 class AuthProvider extends ChangeNotifier {
   final AuthService _authService = AuthService();
@@ -13,6 +15,8 @@ class AuthProvider extends ChangeNotifier {
 
   AiRecommendationsProvider? _aiProvider;
   FavoriteProvider? _favoriteProvider;
+  MovieProvider? _movieProvider;
+  TvshowProvider? _tvshowProvider;
 
   void setAiProvider(AiRecommendationsProvider aiProvider) {
     _aiProvider = aiProvider;
@@ -20,6 +24,14 @@ class AuthProvider extends ChangeNotifier {
 
   void setFavoriteProvider(FavoriteProvider favoriteProvider) {
     _favoriteProvider = favoriteProvider;
+  }
+
+  void setMovieProvider(MovieProvider movieProvider) {
+    _movieProvider = movieProvider;
+  }
+
+  void setTvshowProvider(TvshowProvider tvshowProvider) {
+    _tvshowProvider = tvshowProvider;
   }
 
   AuthProvider() {
@@ -32,12 +44,16 @@ class AuthProvider extends ChangeNotifier {
         // Kullanıcı çıkış yaptığında tüm verilerini temizle
         _aiProvider?.clearAllData();
         _favoriteProvider?.clearAllData();
+        _movieProvider?.clearCache();
+        _tvshowProvider?.clearCache();
       } else {
         _isAuthenticated = true;
         // Farklı bir kullanıcı giriş yaptığında tüm verilerini temizle
         if (previousUser != null && previousUser.uid != user.uid) {
           _aiProvider?.clearAllData();
           _favoriteProvider?.clearAllData();
+          _movieProvider?.clearCache();
+          _tvshowProvider?.clearCache();
         }
       }
       notifyListeners();
@@ -71,6 +87,8 @@ class AuthProvider extends ChangeNotifier {
       // Çıkış yapıldığında tüm verilerini temizle
       _aiProvider?.clearAllData();
       _favoriteProvider?.clearAllData();
+      _movieProvider?.clearCache();
+      _tvshowProvider?.clearCache();
       notifyListeners();
     }
   }
